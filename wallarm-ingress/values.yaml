@@ -4,8 +4,8 @@
 controller:
   name: controller
   image:
-    repository: quay.io/kubernetes-ingress-controller/nginx-ingress-controller
-    tag: "0.15.0"
+    repository: wallarm/ingress-controller
+    tag: "0.16.1"
     pullPolicy: IfNotPresent
 
   config: {}

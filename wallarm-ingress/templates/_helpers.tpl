@@ -70,3 +70,31 @@ Create the name of the service account to use
     {{ default "default" .Values.serviceAccount.name }}
 {{- end -}}
 {{- end -}}
+
+{{/*
+*/}}
+{{- define "nginx-ingress.wallarmInitContainer" -}}
+- name: addnode
+  image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag }}"
+  imagePullPolicy: "{{ .Values.controller.image.pullPolicy }}"
+  command:
+  - sh
+  - -c
+  - test -f /etc/wallarm/node.yml || /usr/share/wallarm-common/addnode -n $(hostname) -l STDOUT -u $USERNAME -p "$PASSWORD"; chown www-data:www-data /etc/wallarm/*
+  env:
+  - name: USERNAME
+    valueFrom:
+      secretKeyRef:
+        key: username
+        name: wallarm
+  - name: PASSWORD
+    valueFrom:
+      secretKeyRef:
+        key: password
+        name: wallarm
+  volumeMounts:
+  - mountPath: /etc/wallarm
+    name: wallarm
+  securityContext:
+    runAsUser: 0
+{{- end -}}

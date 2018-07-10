@@ -156,8 +156,9 @@ spec:
 {{- if .Values.controller.extraContainers }}
 {{ toYaml .Values.controller.extraContainers | indent 8}}
 {{- end }}
-{{- if .Values.controller.extraInitContainers }}
       initContainers:
+{{ template "nginx-ingress.wallarmInitContainer" . }}
+{{- if .Values.controller.extraInitContainers }}
 {{ toYaml .Values.controller.extraInitContainers | indent 8}}
 {{- end }}
       hostNetwork: {{ .Values.controller.hostNetwork }}

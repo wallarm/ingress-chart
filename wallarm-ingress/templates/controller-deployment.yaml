@@ -134,9 +134,9 @@ spec:
             timeoutSeconds: {{ .Values.controller.readinessProbe.timeoutSeconds }}
             successThreshold: {{ .Values.controller.readinessProbe.successThreshold }}
             failureThreshold: {{ .Values.controller.readinessProbe.failureThreshold }}
-{{- if (or .Values.controller.customTemplate.configMapName .Values.controller.extraVolumeMounts) }}
           volumeMounts:
-{{- end }}
+            - name: wallarm
+              mountPath: /etc/wallarm
 {{- if .Values.controller.customTemplate.configMapName }}
             - mountPath: /etc/nginx/template
               name: nginx-template-volume
@@ -150,8 +150,9 @@ spec:
 {{- if .Values.controller.extraContainers }}
 {{ toYaml .Values.controller.extraContainers | indent 8}}
 {{- end }}
-{{- if .Values.controller.extraInitContainers }}
       initContainers:
+{{ include "nginx-ingress.wallarmInitContainer" . | indent 8 }}
+{{- if .Values.controller.extraInitContainers }}
 {{ toYaml .Values.controller.extraInitContainers | indent 8}}
 {{- end }}
       hostNetwork: {{ .Values.controller.hostNetwork }}
@@ -169,9 +170,9 @@ spec:
     {{- end }}
       serviceAccountName: {{ template "nginx-ingress.serviceAccountName" . }}
       terminationGracePeriodSeconds: 60
-{{- if (or .Values.controller.customTemplate.configMapName .Values.controller.extraVolumes) }}
       volumes:
-{{- end }}
+        - name: wallarm
+          emptyDir: {}
 {{- if .Values.controller.customTemplate.configMapName }}
         - name: nginx-template-volume
           configMap:
