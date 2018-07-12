@@ -147,6 +147,9 @@ spec:
 {{- end }}
           resources:
 {{ toYaml .Values.controller.resources | indent 12 }}
+{{- if .Values.controller.wallarm.enabled }}
+{{ include "nginx-ingress.wallarmCollectdContainer" . | indent 8 }}
+{{- end }}
 {{- if .Values.controller.extraContainers }}
 {{ toYaml .Values.controller.extraContainers | indent 8}}
 {{- end }}
@@ -173,6 +176,9 @@ spec:
       volumes:
         - name: wallarm
           emptyDir: {}
+        - name: collectd-config
+          configMap:
+            name: {{ template "nginx-ingress.controller.fullname" . }}-collectd
 {{- if .Values.controller.customTemplate.configMapName }}
         - name: nginx-template-volume
           configMap:

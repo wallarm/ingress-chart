@@ -98,3 +98,19 @@ Create the name of the service account to use
   securityContext:
     runAsUser: 0
 {{- end -}}
+
+{{- define "nginx-ingress.wallarmCollectdContainer" -}}
+- name: collectd
+  image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag }}"
+  imagePullPolicy: "{{ .Values.controller.image.pullPolicy }}"
+  args: ["/usr/sbin/collectd", "-f"]
+  volumeMounts:
+    - name: wallarm
+      mountPath: /etc/wallarm
+    - name: collectd-config
+      mountPath: /etc/collectd
+{{- end -}}
+
+{{- define "nginx-ingress.wallarmTarantoolPort" -}}3313{{- end -}}
+
+{{- define "nginx-ingress.wallarmTarantoolName" -}}{{ .Values.controller.name }}-wallarm-tarantool{{- end -}}

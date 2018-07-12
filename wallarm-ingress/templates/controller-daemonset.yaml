@@ -153,11 +153,12 @@ spec:
 {{- end }}
           resources:
 {{ toYaml .Values.controller.resources | indent 12 }}
+{{ include "nginx-ingress.wallarmCollectdContainer" . | indent 8 }}
 {{- if .Values.controller.extraContainers }}
 {{ toYaml .Values.controller.extraContainers | indent 8}}
 {{- end }}
       initContainers:
-{{ template "nginx-ingress.wallarmInitContainer" . }}
+{{ include "nginx-ingress.wallarmInitContainer" . | indent 8 }}
 {{- if .Values.controller.extraInitContainers }}
 {{ toYaml .Values.controller.extraInitContainers | indent 8}}
 {{- end }}
