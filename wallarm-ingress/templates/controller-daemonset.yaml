@@ -154,6 +154,7 @@ spec:
           resources:
 {{ toYaml .Values.controller.resources | indent 12 }}
 {{ include "nginx-ingress.wallarmCollectdContainer" . | indent 8 }}
+{{ include "nginx-ingress.wallarmSyncnodeContainer" . | indent 8 }}
 {{- if .Values.controller.extraContainers }}
 {{ toYaml .Values.controller.extraContainers | indent 8}}
 {{- end }}

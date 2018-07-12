@@ -71,8 +71,10 @@ Create the name of the service account to use
 {{- end -}}
 {{- end -}}
 
-{{/*
-*/}}
+{{- define "nginx-ingress.wallarmTarantoolPort" -}}3313{{- end -}}
+{{- define "nginx-ingress.wallarmTarantoolName" -}}{{ .Values.controller.name }}-wallarm-tarantool{{- end -}}
+{{- define "nginx-ingress.wallarmSecret" -}}{{ .Values.controller.name }}-secret{{- end -}}
+
 {{- define "nginx-ingress.wallarmInitContainer" -}}
 - name: addnode
   image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag }}"
@@ -80,18 +82,30 @@ Create the name of the service account to use
   command:
   - sh
   - -c
-  - test -f /etc/wallarm/node.yml || /usr/share/wallarm-common/addnode -n $(hostname) -l STDOUT -u $USERNAME -p "$PASSWORD"; chown www-data:www-data /etc/wallarm/*
+  - /usr/share/wallarm-common/addnode -n $(hostname) -l STDOUT -u $USERNAME -p "$PASSWORD"; ruby -ryaml -e 'puts YAML.load($<).update({syncnode:{"proton.db"=>{owner:"www-data"}, "lom"=>{owner:"www-data"}, "selectors"=>{owner:"www-data"}}}).to_yaml' < /etc/wallarm/node.yaml > /etc/wallarm/node.yaml.tmp; mv /etc/wallarm/node.yaml.tmp /etc/wallarm/node.yaml; chown www-data:www-data /etc/wallarm/*
   env:
   - name: USERNAME
     valueFrom:
       secretKeyRef:
         key: username
-        name: wallarm
+        name: {{ template "nginx-ingress.wallarmSecret" . }}
   - name: PASSWORD
     valueFrom:
       secretKeyRef:
         key: password
-        name: wallarm
+        name: {{ template "nginx-ingress.wallarmSecret" . }}
+  volumeMounts:
+  - mountPath: /etc/wallarm
+    name: wallarm
+  securityContext:
+    runAsUser: 0
+{{- end -}}
+
+{{- define "nginx-ingress.wallarmSyncnodeContainer" -}}
+- name: syncnode
+  image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag }}"
+  imagePullPolicy: "{{ .Values.controller.image.pullPolicy }}"
+  command: ["sh", "-c", "while true; do /usr/share/wallarm-common/syncnode -l STDOUT -r600 || true; done"]
   volumeMounts:
   - mountPath: /etc/wallarm
     name: wallarm
@@ -110,7 +124,3 @@ Create the name of the service account to use
     - name: collectd-config
       mountPath: /etc/collectd
 {{- end -}}
-
-{{- define "nginx-ingress.wallarmTarantoolPort" -}}3313{{- end -}}
-
-{{- define "nginx-ingress.wallarmTarantoolName" -}}{{ .Values.controller.name }}-wallarm-tarantool{{- end -}}
