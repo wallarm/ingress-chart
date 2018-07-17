@@ -290,6 +290,26 @@ controller:
         successThreshold: 1
         timeoutSeconds: 1
       resources: {}
+    metrics:
+      enabled: false
+
+      service:
+        annotations:
+          prometheus.io/scrape: "true"
+          prometheus.io/path: /wallarm-metrics
+          prometheus.io/port: "18080"
+
+        clusterIP: ""
+
+        ## List of IP addresses at which the stats-exporter service is available
+        ## Ref: https://kubernetes.io/docs/user-guide/services/#external-ips
+        ##
+        externalIPs: []
+
+        loadBalancerIP: ""
+        loadBalancerSourceRanges: []
+        servicePort: 9913
+        type: ClusterIP
 
 ## Rollback limit
 ##
