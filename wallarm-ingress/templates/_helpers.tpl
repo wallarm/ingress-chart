@@ -82,17 +82,12 @@ Create the name of the service account to use
   command:
   - sh
   - -c
-  - /usr/share/wallarm-common/addnode -n $(hostname) -l STDOUT -u $USERNAME -p "$PASSWORD"; ruby -ryaml -e 'puts YAML.load($<).update({syncnode:{"proton.db"=>{owner:"www-data"}, "lom"=>{owner:"www-data"}, "selectors"=>{owner:"www-data"}}}).to_yaml' < /etc/wallarm/node.yaml > /etc/wallarm/node.yaml.tmp; mv /etc/wallarm/node.yaml.tmp /etc/wallarm/node.yaml; chown www-data:www-data /etc/wallarm/*
+  - /usr/share/wallarm-common/synccloud --one-time; chown www-data:www-data /etc/wallarm/*
   env:
-  - name: USERNAME
+  - name: WALLARM_API_TOKEN
     valueFrom:
       secretKeyRef:
-        key: username
-        name: {{ template "nginx-ingress.wallarmSecret" . }}
-  - name: PASSWORD
-    valueFrom:
-      secretKeyRef:
-        key: password
+        key: token
         name: {{ template "nginx-ingress.wallarmSecret" . }}
   volumeMounts:
   - mountPath: /etc/wallarm
@@ -102,10 +97,16 @@ Create the name of the service account to use
 {{- end -}}
 
 {{- define "nginx-ingress.wallarmSyncnodeContainer" -}}
-- name: syncnode
+- name: synccloud
   image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag }}"
   imagePullPolicy: "{{ .Values.controller.image.pullPolicy }}"
-  command: ["sh", "-c", "while true; do /usr/share/wallarm-common/syncnode -l STDOUT -r600 || true; done"]
+  command: ["sh", "-c", "while true; do /usr/share/wallarm-common/synccloud || true; chown www-data:www-data /etc/wallarm/*; done"]
+  env:
+  - name: WALLARM_API_TOKEN
+    valueFrom:
+      secretKeyRef:
+        key: token
+        name: {{ template "nginx-ingress.wallarmSecret" . }}
   volumeMounts:
   - mountPath: /etc/wallarm
     name: wallarm

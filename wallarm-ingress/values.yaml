@@ -277,8 +277,7 @@ controller:
 
   wallarm:
     enabled: false
-    username: ""
-    password: ""
+    token: ""
     tarantool:
       service:
         annotations: {}
