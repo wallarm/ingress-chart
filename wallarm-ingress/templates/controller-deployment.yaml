@@ -158,7 +158,9 @@ spec:
 {{ toYaml .Values.controller.extraContainers | indent 8}}
 {{- end }}
       initContainers:
+{{- if .Values.controller.wallarm.enabled }}
 {{ include "nginx-ingress.wallarmInitContainer" . | indent 8 }}
+{{- end }}
 {{- if .Values.controller.extraInitContainers }}
 {{ toYaml .Values.controller.extraInitContainers | indent 8}}
 {{- end }}

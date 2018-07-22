@@ -80,15 +80,18 @@ Create the name of the service account to use
   image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag }}"
   imagePullPolicy: "{{ .Values.controller.image.pullPolicy }}"
   command:
-  - sh
-  - -c
-  - /usr/share/wallarm-common/synccloud --one-time; chown www-data:www-data /etc/wallarm/*
+  - /usr/share/wallarm-common/synccloud
+  - --one-time
   env:
   - name: WALLARM_API_TOKEN
     valueFrom:
       secretKeyRef:
         key: token
         name: {{ template "nginx-ingress.wallarmSecret" . }}
+  - name: WALLARM_SYNCNODE_OWNER
+    value: www-data
+  - name: WALLARM_SYNCNODE_GROUP
+    value: www-data
   volumeMounts:
   - mountPath: /etc/wallarm
     name: wallarm
@@ -100,13 +103,17 @@ Create the name of the service account to use
 - name: synccloud
   image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag }}"
   imagePullPolicy: "{{ .Values.controller.image.pullPolicy }}"
-  command: ["sh", "-c", "while true; do /usr/share/wallarm-common/synccloud || true; chown www-data:www-data /etc/wallarm/*; done"]
+  command: ["/usr/share/wallarm-common/synccloud"]
   env:
   - name: WALLARM_API_TOKEN
     valueFrom:
       secretKeyRef:
         key: token
         name: {{ template "nginx-ingress.wallarmSecret" . }}
+  - name: WALLARM_SYNCNODE_OWNER
+    value: www-data
+  - name: WALLARM_SYNCNODE_GROUP
+    value: www-data
   volumeMounts:
   - mountPath: /etc/wallarm
     name: wallarm
