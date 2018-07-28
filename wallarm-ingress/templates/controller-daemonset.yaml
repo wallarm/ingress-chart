@@ -143,9 +143,9 @@ spec:
             timeoutSeconds: {{ .Values.controller.readinessProbe.timeoutSeconds }}
             successThreshold: {{ .Values.controller.readinessProbe.successThreshold }}
             failureThreshold: {{ .Values.controller.readinessProbe.failureThreshold }}
-{{- if (or .Values.controller.customTemplate.configMapName .Values.controller.extraVolumeMounts) }}
           volumeMounts:
-{{- end }}
+            - name: wallarm
+              mountPath: /etc/wallarm
 {{- if .Values.controller.customTemplate.configMapName }}
             - mountPath: /etc/nginx/template
               name: nginx-template-volume
@@ -185,9 +185,12 @@ spec:
     {{- end }}
       serviceAccountName: {{ template "nginx-ingress.serviceAccountName" . }}
       terminationGracePeriodSeconds: 60
-{{- if (or .Values.controller.customTemplate.configMapName .Values.controller.extraVolumes) }}
       volumes:
-{{- end }}
+        - name: wallarm
+          emptyDir: {}
+        - name: collectd-config
+          configMap:
+            name: {{ template "nginx-ingress.controller.fullname" . }}-collectd
 {{- if .Values.controller.customTemplate.configMapName }}
         - name: nginx-template-volume
           configMap:
