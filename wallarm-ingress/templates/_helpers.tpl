@@ -80,8 +80,9 @@ Create the name of the service account to use
   image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag }}"
   imagePullPolicy: "{{ .Values.controller.image.pullPolicy }}"
   command:
-  - /usr/share/wallarm-common/synccloud
-  - --one-time
+  - sh
+  - -c
+  - /usr/share/wallarm-common/synccloud --one-time && chmod 0644 /etc/wallarm/*
   env:
   - name: WALLARM_API_TOKEN
     valueFrom:
@@ -103,7 +104,10 @@ Create the name of the service account to use
 - name: synccloud
   image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag }}"
   imagePullPolicy: "{{ .Values.controller.image.pullPolicy }}"
-  command: ["/usr/share/wallarm-common/synccloud"]
+  command:
+  - sh
+  - -c
+  - /usr/share/wallarm-common/synccloud
   env:
   - name: WALLARM_API_TOKEN
     valueFrom:

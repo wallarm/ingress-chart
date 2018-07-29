@@ -1,5 +1,5 @@
 name: wallarm-ingress
-version: 0.99.12
+version: 0.99.13
 appVersion: 0.99.11
 home: https://github.com/wallarm/ingress
 description: An Wallarm Ingress controller that uses ConfigMap to store the nginx configuration.
