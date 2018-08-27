@@ -1,18 +1,30 @@
-# nginx-ingress
+# wallarm-ingress
 
-[nginx-ingress](https://github.com/kubernetes/ingress-nginx) is an Ingress controller that uses ConfigMap to store the nginx configuration.
+[wallarm-ingress](https://github.com/wallarm/ingress) is the distribution of Wallarm Node based on the
+[community supported NGINX Ingress controller](https://github.com/kubernetes/ingress-nginx).
+
+Wallarm Ingress Controller allows you to use Wallarm Application Security Platform to protect web services
+that are running in the Kubernetes cluster.
 
 To use, add the `kubernetes.io/ingress.class: nginx` annotation to your Ingress resources.
 
 ## TL;DR;
 
 ```console
-$ helm install stable/nginx-ingress
+$ helm repo add wallarm https://repo.wallarm.com/charts/stable
+$ helm repo update
+$ helm install wallarm/wallarm-ingress
+```
+wallarm-ingress aims to be a drop-in replacement of nginx-ingress, so we use the same ingress class `nginx`.
+If you want to install wallarm-ingress as the additional Ingress Controller, you should change ingress class f.e.
+
+```console
+$ helm install wallarm/wallarm-ingress --set controller.ingressClass=wallarm
 ```
 
 ## Introduction
 
-This chart bootstraps an nginx-ingress deployment on a [Kubernetes](http://kubernetes.io) cluster using the [Helm](https://helm.sh) package manager.
+This chart bootstraps an wallarm-ingress deployment on a [Kubernetes](http://kubernetes.io) cluster using the [Helm](https://helm.sh) package manager.
 
 ## Prerequisites
   - Kubernetes 1.6+
@@ -22,10 +34,19 @@ This chart bootstraps an nginx-ingress deployment on a [Kubernetes](http://kuber
 To install the chart with the release name `my-release`:
 
 ```console
-$ helm install --name my-release stable/nginx-ingress
+$ helm repo add wallarm https://repo.wallarm.com/charts/stable
+$ helm repo update
+$ helm install --name my-release wallarm/wallarm-ingress
 ```
 
-The command deploys nginx-ingress on the Kubernetes cluster in the default configuration. The [configuration](#configuration) section lists the parameters that can be configured during installation.
+The command deploys wallarm-ingress on the Kubernetes cluster in the default configuration. The [configuration](#configuration) section lists the parameters that can be configured during installation.
+
+By default Wallarm protection is disabled. To enable protection obtain Cloud Node token
+from the [Wallarm Console](https://my.wallarm.com/settings/nodes) and install controller by the command
+
+```console
+$ helm install --name my-release wallarm/wallarm-ingress --set controller.wallarm.enabled=true --set controller.wallarm.token=<CLOUD NODE TOKEN>
+```
 
 > **Tip**: List all releases using `helm list`
 
@@ -41,7 +62,7 @@ The command removes all the Kubernetes components associated with the chart and 
 
 ## Configuration
 
-The following table lists the configurable parameters of the nginx-ingress chart and their default values.
+The following table lists the configurable parameters of the wallarm-ingress chart and their default values.
 
 Parameter | Description | Default
 --- | --- | ---
@@ -125,6 +146,25 @@ Parameter | Description | Default
 `controller.customTemplate.configMapKey` | configMap key containing the nginx template | `""`
 `controller.headers` | configMap key:value pairs containing the [custom headers](https://github.com/kubernetes/ingress-nginx/tree/master/docs/examples/customization/custom-headers) for Nginx | `{}`
 `controller.updateStrategy` | allows setting of RollingUpdate strategy | `{}`
+`controller.wallarm.enabled` | if `true`, enable Wallarm protection | `false` |
+`controller.wallarm.token` | Cluster Node token to authorize controller in the Wallarm Cloud | `""` |
+`controller.wallarm.tarantool.service.annotations` | annotations to be added to the postanalytics service | `{}` |
+`controller.wallarm.tarantool.replicaCount` | desired number of postanalytics service pods | `1` |
+`controller.wallarm.tarantool.arena` | Amount of memory allocated for postanalytics service  | `"0.2"` |
+`controller.wallarm.tarantool.livenessProbe.failureThreshold` | Minimum consecutive failures for the probe to be considered failed after having succeeded. | 3 |
+`controller.wallarm.tarantool.livenessProbe.initialDelaySeconds` | Delay before liveness probe is initiated | 10 |
+`controller.wallarm.tarantool.livenessProbe.periodSeconds` | How often to perform the probe | 10 |
+`controller.wallarm.tarantool.livenessProbe.successThreshold` | Minimum consecutive successes for the probe to be considered successful after having failed. | 1 |
+`controller.wallarm.tarantool.livenessProbe.timeoutSeconds` | When the probe times out | 1 |
+`controller.wallarm.tarantool.resources` | postanalytics service pod resource requests & limits | `{}` |
+`controller.wallarm.metrics.enabled` | if `true`, enable Prometheus metrics (`controller.metrics.enabled` must be `true` as well)  | `false` |
+`controller.wallarm.metrics.service.annotations` | annotations for Prometheus metrics service | `{"prometheus.io/scrape": "true", "prometheus.io/path": "/wallarm-metrics", "prometheus.io/port": "18080"}` |
+`controller.wallarm.metrics.clusterIP` | internal controller cluster service IP | `""` |
+`controller.wallarm.metrics.externalIP` | controller service external IP addresses. Do not set this when `controller.hostNetwork` is set to `true` and `kube-proxy` is used as there will be a port-conflict for port `80` | `[]` |
+`controller.wallarm.metrics.loadBalancerIP` | IP address to assign to load balancer (if supported) | `""` |
+`controller.wallarm.metrics.loadBalancerSourceRanges` | list of IP CIDRs allowed access to load balancer (if supported) | `[]` |
+`controller.wallarm.metrics.servicePort` | Prometheus metrics service port | 9913 |
+`controller.wallarm.metrics.type` | Prometheus metrics target port | `ClusterIP` |
 `defaultBackend.name` | name of the default backend component | `default-backend`
 `defaultBackend.image.repository` | default backend container image repository | `k8s.gcr.io/defaultbackend`
 `defaultBackend.image.tag` | default backend container image tag | `1.3`
@@ -153,21 +193,21 @@ Parameter | Description | Default
 `udp` | UDP service key:value pairs | `{}`
 
 ```console
-$ helm install stable/nginx-ingress --name my-release \
-    --set controller.stats.enabled=true
+$ helm install wallarm/wallarm-ingress --name my-release \
+    --set controller.wallarm.enabled=true
 ```
 
 Alternatively, a YAML file that specifies the values for the parameters can be provided while installing the chart. For example,
 
 ```console
-$ helm install stable/nginx-ingress --name my-release -f values.yaml
+$ helm install wallarm/wallarm-ingress --name my-release -f values.yaml
 ```
 
 A useful trick to debug issues with ingress is to increase the logLevel
 as described [here](https://github.com/kubernetes/ingress-nginx/blob/master/docs/troubleshooting.md#debug)
 
 ```console
-$ helm install stable/nginx-ingress --set controller.extraArgs.v=2
+$ helm install wallarm/wallarm-ingress --set controller.extraArgs.v=2
 ```
 
 ## Prometheus Metrics
@@ -175,9 +215,10 @@ $ helm install stable/nginx-ingress --set controller.extraArgs.v=2
 The Nginx ingress controller can export Prometheus metrics. In order for this to work, the VTS dashboard must be enabled as well.
 
 ```console
-$ helm install stable/nginx-ingress --name my-release \
+$ helm install wallarm/wallarm-ingress --name my-release \
     --set controller.stats.enabled=true \
-    --set controller.metrics.enabled=true
+    --set controller.metrics.enabled=true \
+    --set controller.wallarm.metrics.enabled=true
 ```
 
 You can add Prometheus annotations to the metrics service using `controller.metrics.service.annotations`. Alternatively, if you use the Prometheus Operator, you need to create a ServiceMonitor as follows:
