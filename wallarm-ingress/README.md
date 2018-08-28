@@ -15,8 +15,8 @@ $ helm repo add wallarm https://repo.wallarm.com/charts/stable
 $ helm repo update
 $ helm install wallarm/wallarm-ingress
 ```
-wallarm-ingress aims to be a drop-in replacement of nginx-ingress, so we use the same ingress class `nginx`.
-If you want to install wallarm-ingress as the additional Ingress Controller, you should change ingress class f.e.
+wallarm-ingress is designed to be a drop-in replacement of nginx-ingress, so we use the same ingress class `nginx`.
+If you want to install wallarm-ingress as the additional Ingress Controller, you should change ingress class i.e.
 
 ```console
 $ helm install wallarm/wallarm-ingress --set controller.ingressClass=wallarm
@@ -41,8 +41,9 @@ $ helm install --name my-release wallarm/wallarm-ingress
 
 The command deploys wallarm-ingress on the Kubernetes cluster in the default configuration. The [configuration](#configuration) section lists the parameters that can be configured during installation.
 
-By default Wallarm protection is disabled. To enable protection obtain Cloud Node token
-from the [Wallarm Console](https://my.wallarm.com/settings/nodes) and install controller by the command
+By default Wallarm service is disabled. To enable Wallarm, you will need to obtain Cloud Node token and connect to the Wallarm cloud console.
+You can obtain the token from the [Wallarm Console](https://my.wallarm.com/settings/nodes). You would neeed to create a new node and copy the token.
+Install controller by the command
 
 ```console
 $ helm install --name my-release wallarm/wallarm-ingress --set controller.wallarm.enabled=true --set controller.wallarm.token=<CLOUD NODE TOKEN>
@@ -71,7 +72,7 @@ Parameter | Description | Default
 `controller.image.tag` | controller container image tag | `0.15.0`
 `controller.image.pullPolicy` | controller container image pull policy | `IfNotPresent`
 `controller.config` | nginx ConfigMap entries | none
-`controller.hostNetwork` | If the nginx deployment / daemonset should run on the host's network namespace. Do not set this when `controller.service.externalIPs` is set and `kube-proxy` is used as there will be a port-conflict for port `80` | false
+`controller.hostNetwork` | If the nginx deployment / DaemonSet should run on the host's network namespace. Do not set this when `controller.service.externalIPs` is set and `kube-proxy` is used as there will be a port-conflict for port `80` | false
 `controller.defaultBackendService` | default 404 backend service; required only if `defaultBackend.enabled = false` | `""`
 `controller.electionID` | election ID to use for the status update | `ingress-controller-leader`
 `controller.extraEnvs` | any additional environment variables to set in the pods | `{}`
@@ -192,6 +193,8 @@ Parameter | Description | Default
 `tcp` | TCP service key:value pairs | `{}`
 `udp` | UDP service key:value pairs | `{}`
 
+
+Usage example
 ```console
 $ helm install wallarm/wallarm-ingress --name my-release \
     --set controller.wallarm.enabled=true
