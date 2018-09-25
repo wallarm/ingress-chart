@@ -5,7 +5,7 @@ controller:
   name: controller
   image:
     repository: wallarm/nginx-ingress-controller
-    tag: "1.0.0"
+    tag: "1.0.1"
     pullPolicy: IfNotPresent
 
   config: {}
