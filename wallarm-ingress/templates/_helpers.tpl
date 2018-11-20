@@ -123,6 +123,8 @@ Create the name of the service account to use
     name: wallarm
   securityContext:
     runAsUser: 0
+  resources:
+{{ toYaml .Values.controller.resources | indent 4 }}
 {{- end -}}
 
 {{- define "nginx-ingress.wallarmCollectdContainer" -}}
@@ -135,4 +137,6 @@ Create the name of the service account to use
       mountPath: /etc/wallarm
     - name: collectd-config
       mountPath: /etc/collectd
+  resources:
+{{ toYaml .Values.controller.resources | indent 4 }}
 {{- end -}}
