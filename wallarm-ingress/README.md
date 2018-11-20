@@ -167,6 +167,8 @@ Parameter | Description | Default
 `controller.wallarm.metrics.loadBalancerSourceRanges` | list of IP CIDRs allowed access to load balancer (if supported) | `[]` |
 `controller.wallarm.metrics.servicePort` | Prometheus metrics service port | 9913 |
 `controller.wallarm.metrics.type` | Prometheus metrics target port | `ClusterIP` |
+`controller.wallarm.collectd.resources` | collectd container resource requests & limits | `{}` |
+`controller.wallarm.synccloud.resources` | synccloud container resource requests & limits | `{}` |
 `defaultBackend.enabled` | If false, controller.defaultBackendService must be provided | `true`
 `defaultBackend.name` | name of the default backend component | `default-backend`
 `defaultBackend.image.repository` | default backend container image repository | `k8s.gcr.io/defaultbackend`
