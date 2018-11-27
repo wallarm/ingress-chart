@@ -124,7 +124,7 @@ Create the name of the service account to use
   securityContext:
     runAsUser: 0
   resources:
-{{ toYaml .Values.controller.resources | indent 4 }}
+{{ toYaml .Values.controller.wallarm.synccloud.resources | indent 4 }}
 {{- end -}}
 
 {{- define "nginx-ingress.wallarmCollectdContainer" -}}
@@ -138,5 +138,5 @@ Create the name of the service account to use
     - name: collectd-config
       mountPath: /etc/collectd
   resources:
-{{ toYaml .Values.controller.resources | indent 4 }}
+{{ toYaml .Values.controller.wallarm.collectd.resources | indent 4 }}
 {{- end -}}
