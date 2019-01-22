@@ -279,6 +279,7 @@ controller:
 
   wallarm:
     enabled: false
+    apiHost: api.wallarm.com
     token: ""
     tarantool:
       service:

@@ -84,6 +84,8 @@ Create the name of the service account to use
   - -c
   - /usr/share/wallarm-common/synccloud --one-time && chmod 0644 /etc/wallarm/*
   env:
+  - name: WALLARM_API_HOST
+    value: {{ .Values.controller.wallarm.apiHost | default "api.wallarm.com" }}
   - name: WALLARM_API_TOKEN
     valueFrom:
       secretKeyRef:
@@ -109,6 +111,8 @@ Create the name of the service account to use
   - -c
   - /usr/share/wallarm-common/synccloud
   env:
+  - name: WALLARM_API_HOST
+    value: {{ .Values.controller.wallarm.apiHost | default "api.wallarm.com" }}
   - name: WALLARM_API_TOKEN
     valueFrom:
       secretKeyRef:

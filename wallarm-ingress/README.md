@@ -149,6 +149,7 @@ Parameter | Description | Default
 `controller.headers` | configMap key:value pairs containing the [custom headers](https://github.com/kubernetes/ingress-nginx/tree/master/docs/examples/customization/custom-headers) for Nginx | `{}`
 `controller.updateStrategy` | allows setting of RollingUpdate strategy | `{}`
 `controller.wallarm.enabled` | if `true`, enable Wallarm protection | `false` |
+`controller.wallarm.apiHost` | Address of Wallarm API service | `"api.wallarm.com"` |
 `controller.wallarm.token` | Cluster Node token to authorize controller in the Wallarm Cloud | `""` |
 `controller.wallarm.tarantool.service.annotations` | annotations to be added to the postanalytics service | `{}` |
 `controller.wallarm.tarantool.replicaCount` | desired number of postanalytics service pods | `1` |
