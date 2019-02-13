@@ -267,7 +267,7 @@ controller:
       ## List of IP addresses at which the stats-exporter service is available
       ## Ref: https://kubernetes.io/docs/user-guide/services/#external-ips
       ##
-      externalIPs: []
+      externalIPs: 10.0.0.43
 
       loadBalancerIP: ""
       loadBalancerSourceRanges: []
