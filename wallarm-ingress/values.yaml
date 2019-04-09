@@ -5,7 +5,7 @@ controller:
   name: controller
   image:
     repository: wallarm/nginx-ingress-controller
-    tag: "1.1.0"
+    tag: "1.2.0"
     pullPolicy: IfNotPresent
     # www-data -> uid 33
     runAsUser: 33
@@ -160,7 +160,6 @@ controller:
   service:
     annotations: {}
     labels: {}
-    clusterIP: ""
 
     ## List of IP addresses at which the controller services are available
     ## Ref: https://kubernetes.io/docs/user-guide/services/#external-ips
@@ -240,7 +239,6 @@ controller:
 
     service:
       annotations: {}
-      clusterIP: ""
 
       ## List of IP addresses at which the stats service is available
       ## Ref: https://kubernetes.io/docs/user-guide/services/#external-ips
@@ -261,8 +259,6 @@ controller:
       annotations: {}
       # prometheus.io/scrape: "true"
       # prometheus.io/port: "10254"
-
-      clusterIP: ""
 
       ## List of IP addresses at which the stats-exporter service is available
       ## Ref: https://kubernetes.io/docs/user-guide/services/#external-ips
@@ -301,8 +297,6 @@ controller:
           prometheus.io/scrape: "true"
           prometheus.io/path: /wallarm-metrics
           prometheus.io/port: "18080"
-
-        clusterIP: ""
 
         ## List of IP addresses at which the stats-exporter service is available
         ## Ref: https://kubernetes.io/docs/user-guide/services/#external-ips
@@ -378,7 +372,6 @@ defaultBackend:
 
   service:
     annotations: {}
-    clusterIP: ""
 
     ## List of IP addresses at which the default backend service is available
     ## Ref: https://kubernetes.io/docs/user-guide/services/#external-ips
