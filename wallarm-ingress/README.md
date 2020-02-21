@@ -34,10 +34,20 @@ This chart bootstraps an wallarm-ingress deployment on a [Kubernetes](http://kub
 
 To install the chart with the release name `my-release`:
 
+Helm v2
+
 ```console
 $ helm repo add wallarm https://repo.wallarm.com/charts/stable
 $ helm repo update
 $ helm install --name my-release wallarm/wallarm-ingress
+```
+
+Helm v3
+
+```console
+$ helm repo add wallarm https://repo.wallarm.com/charts/stable
+$ helm repo update
+$ helm install my-release wallarm/wallarm-ingress
 ```
 
 The command deploys wallarm-ingress on the Kubernetes cluster in the default configuration. The [configuration](#configuration) section lists the parameters that can be configured during installation.
@@ -46,11 +56,19 @@ By default Wallarm service is disabled. To enable Wallarm, you will need to obta
 You can obtain the token from the [Wallarm Console](https://my.wallarm.com/settings/nodes). You would neeed to create a new node and copy the token.
 Install controller by the command
 
+Helm v2
+
 ```console
 $ helm install --name my-release wallarm/wallarm-ingress --set controller.wallarm.enabled=true --set controller.wallarm.token=<CLOUD NODE TOKEN>
 ```
 
-> **Tip**: List all releases using `helm list`
+Helm v3
+
+```console
+$ helm install my-release wallarm/wallarm-ingress --set controller.wallarm.enabled=true --set controller.wallarm.token=<CLOUD NODE TOKEN>
+```
+
+> **Tip**: List all releases using `helm list` or `helm ls`
 
 ## Uninstalling the Chart
 
@@ -265,15 +283,32 @@ Parameter | Description | Default
 
 
 Usage example
+
+Helm v2
+
 ```console
 $ helm install wallarm/wallarm-ingress --name my-release \
     --set controller.wallarm.enabled=true
-```console
+```
 
 Alternatively, a YAML file that specifies the values for the parameters can be provided while installing the chart. For example,
 
 ```console
 $ helm install wallarm/wallarm-ingress --name my-release -f values.yaml
+```
+
+Helm v3
+
+```console
+$ helm install wallarm/wallarm-ingress my-release \
+    --set controller.wallarm.enabled=true
+
+```
+
+Alternatively, a YAML file that specifies the values for the parameters can be provided while installing the chart. For example,
+
+```console
+$ helm install my-release wallarm/wallarm-ingress -f values.yaml
 ```
 
 A useful trick to debug issues with ingress is to increase the logLevel
@@ -293,8 +328,19 @@ else it would make it impossible to evacuate a node. See [gh issue #7127](https:
 
 The Nginx ingress controller can export Prometheus metrics.
 
+Helm v2
+
 ```console
 $ helm install wallarm/wallarm-ingress --name my-release \
+    --set controller.stats.enabled=true \
+    --set controller.metrics.enabled=true \
+    --set controller.wallarm.metrics.enabled=true
+```
+
+Helm v3
+
+```console
+$ helm install wallarm/wallarm-ingress my-release \
     --set controller.stats.enabled=true \
     --set controller.metrics.enabled=true \
     --set controller.wallarm.metrics.enabled=true
