@@ -10,6 +10,10 @@ metadata:
     release: {{ .Release.Name }}
   name: {{ template "nginx-ingress.controller.fullname" . }}-wallarm-tarantool
 spec:
+  selector:
+    matchLabels:
+      app: {{ template "nginx-ingress.name" . }}
+      release: {{ .Release.Name }}
   replicas: {{ .Values.controller.wallarm.tarantool.replicaCount }}
   template:
     metadata:
