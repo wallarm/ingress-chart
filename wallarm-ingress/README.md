@@ -148,6 +148,7 @@ Parameter | Description | Default
 `controller.readinessProbe.failureThreshold` | Minimum consecutive failures for the probe to be considered failed after having succeeded. | 3
 `controller.readinessProbe.port` | The port number that the readiness probe will listen on. | 10254
 `controller.metrics.enabled` | if `true`, enable Prometheus metrics | `false`
+`controller.stats.service.omitClusterIP` | To omit the `clusterIP` from the stats service | `false`
 `controller.metrics.service.annotations` | annotations for Prometheus metrics service | `{}`
 `controller.metrics.service.clusterIP` | cluster IP address to assign to service | `""`
 `controller.metrics.service.omitClusterIP` | To omit the `clusterIP` from the metrics service | `false`

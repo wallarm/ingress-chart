@@ -342,6 +342,7 @@ controller:
 
     service:
       annotations: {}
+      omitClusterIP: false
 
       ## List of IP addresses at which the stats service is available
       ## Ref: https://kubernetes.io/docs/user-guide/services/#external-ips
