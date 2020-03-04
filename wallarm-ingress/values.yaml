@@ -227,6 +227,7 @@ controller:
 
     annotations: {}
     labels: {}
+    ## Deprecated, instead simply do not provide a clusterIP value
     omitClusterIP: false
     # clusterIP: ""
 
@@ -317,6 +318,7 @@ controller:
 
     service:
       annotations: {}
+      ## Deprecated, instead simply do not provide a clusterIP value
       omitClusterIP: false
       # clusterIP: ""
       externalIPs: []
@@ -362,6 +364,7 @@ controller:
       # prometheus.io/scrape: "true"
       # prometheus.io/port: "10254"
 
+      ## Deprecated, instead simply do not provide a clusterIP value
       omitClusterIP: false
       # clusterIP: ""
 
@@ -539,6 +542,7 @@ defaultBackend:
 
   service:
     annotations: {}
+    ## Deprecated, instead simply do not provide a clusterIP value
     omitClusterIP: false
     # clusterIP: ""
 
