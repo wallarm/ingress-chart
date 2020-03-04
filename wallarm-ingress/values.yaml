@@ -450,6 +450,9 @@ controller:
       resources: {}
     collectd:
       resources: {}
+    acl:
+      enabled: false
+      resources: {}
 
 ## Rollback limit
 ##

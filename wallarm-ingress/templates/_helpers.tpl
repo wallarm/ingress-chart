@@ -102,6 +102,31 @@ Create the name of the service account to use
     runAsUser: 0
 {{- end -}}
 
+{{- define "nginx-ingress.wallarmInitContainerAcl" -}}
+- name: add-aclurl
+  image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag }}"
+  imagePullPolicy: "{{ .Values.controller.image.pullPolicy }}"
+  command: ["/bin/sh", "-c"]
+  args: ["/usr/bin/printf 'sync_blacklist:\n    nginx_url: http://127.0.0.1:18080/wallarm-acl' >> /etc/wallarm/node.yaml"]
+  volumeMounts:
+  - mountPath: /etc/wallarm
+    name: wallarm
+  securityContext:
+    runAsUser: 0
+- name: add-blacklist
+  image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag }}"
+  imagePullPolicy: "{{ .Values.controller.image.pullPolicy }}"
+  command:
+  - sh
+  - -c
+  - /usr/local/openresty/nginx/sbin/nginx -c /etc/nginx/nginx-blacklistonly.conf && /usr/share/wallarm-common/sync-blacklist --one-time -l STDOUT
+  volumeMounts:
+  - mountPath: /etc/wallarm
+    name: wallarm
+  - mountPath: /usr/local/openresty/nginx/wallarm_acl_default
+    name: wallarm-acl
+{{- end -}}
+
 {{- define "nginx-ingress.wallarmSyncnodeContainer" -}}
 - name: synccloud
   image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag }}"
@@ -129,6 +154,19 @@ Create the name of the service account to use
     runAsUser: 0
   resources:
 {{ toYaml .Values.controller.wallarm.synccloud.resources | indent 4 }}
+{{- end -}}
+
+{{- define "nginx-ingress.wallarmSyncAclContainer" -}}
+- name: sync-blacklist
+  image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag }}"
+  command: ["sh", "-c", "while true; do timeout -k 15s 3h /usr/share/wallarm-common/sync-blacklist -l STDOUT || true; sleep 60; done"]
+  volumeMounts:
+  - mountPath: /etc/wallarm
+    name: wallarm
+  - mountPath: /usr/local/openresty/nginx/wallarm_acl_default
+    name: wallarm-acl
+  resources:
+{{ toYaml .Values.controller.wallarm.acl.resources | indent 4 }}
 {{- end -}}
 
 {{- define "nginx-ingress.wallarmCollectdContainer" -}}
