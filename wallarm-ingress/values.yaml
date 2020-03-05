@@ -417,6 +417,7 @@ controller:
     apiHost: api.wallarm.com
     token: ""
     tarantool:
+      kind: Deployment
       service:
         annotations: {}
       replicaCount: 1
