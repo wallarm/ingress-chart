@@ -417,6 +417,7 @@ controller:
     apiHost: api.wallarm.com
     token: ""
     tarantool:
+      kind: Deployment
       service:
         annotations: {}
       replicaCount: 1
@@ -449,6 +450,9 @@ controller:
     synccloud:
       resources: {}
     collectd:
+      resources: {}
+    acl:
+      enabled: false
       resources: {}
 
 ## Rollback limit

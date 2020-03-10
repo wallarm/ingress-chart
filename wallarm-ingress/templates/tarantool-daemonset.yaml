@@ -1,7 +1,7 @@
 {{- if .Values.controller.wallarm.enabled }}
-{{- if eq .Values.controller.wallarm.tarantool.kind "Deployment" }}
+{{- if eq .Values.controller.wallarm.tarantool.kind "DaemonSet" }}
 apiVersion: {{ template "deployment.apiVersion" . }}
-kind: Deployment
+kind: DaemonSet
 metadata:
   labels:
     app: {{ template "nginx-ingress.name" . }}
@@ -15,7 +15,6 @@ spec:
     matchLabels:
       app: {{ template "nginx-ingress.name" . }}
       release: {{ .Release.Name }}
-  replicas: {{ .Values.controller.wallarm.tarantool.replicaCount }}
   template:
     metadata:
       labels:
