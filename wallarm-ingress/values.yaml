@@ -415,6 +415,8 @@ controller:
   wallarm:
     enabled: false
     apiHost: api.wallarm.com
+    apiPort: 444
+    apiSSL: true
     token: ""
     tarantool:
       kind: Deployment
