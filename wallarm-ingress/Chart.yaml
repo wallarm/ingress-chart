@@ -1,7 +1,7 @@
 apiVersion: v1
 name: wallarm-ingress
 version: 1.7.1
-appVersion: 1.6.1
+appVersion: 1.6.3
 home: https://github.com/wallarm/ingress
 description: An Wallarm Ingress controller that uses ConfigMap to store the nginx configuration.
 icon: https://wallarm.com/assets/images/logo.svg
