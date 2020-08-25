@@ -114,6 +114,12 @@ spec:
           volumeMounts:
           - mountPath: /etc/wallarm
             name: wallarm
+        - name: appstructure
+          image: "alexandro/wallarm-appstructure"
+          imagePullPolicy: "Always"
+          volumeMounts:
+          - mountPath: /etc/wallarm
+            name: wallarm
     {{- if .Values.controller.wallarm.tarantool.nodeSelector }}
       nodeSelector:
 {{ toYaml .Values.controller.wallarm.tarantool.nodeSelector | indent 8 }}
