@@ -103,7 +103,11 @@ Create the name of the service account to use
   - mountPath: /etc/wallarm
     name: wallarm
   securityContext:
+    {{- if .Values.podSecurityPolicy.enabled }}
+    runAsUser: {{ .Values.controller.image.runAsUser | default 65534 }}
+    {{- else }}
     runAsUser: 0
+    {{- end }}
 {{- end -}}
 
 {{- define "nginx-ingress.wallarmInitContainerAcl" -}}
@@ -116,7 +120,11 @@ Create the name of the service account to use
   - mountPath: /etc/wallarm
     name: wallarm
   securityContext:
+    {{- if .Values.podSecurityPolicy.enabled }}
+    runAsUser: {{ .Values.controller.image.runAsUser | default 65534 }}
+    {{- else }}
     runAsUser: 0
+    {{- end }}
 - name: add-blacklist
   image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag }}"
   imagePullPolicy: "{{ .Values.controller.image.pullPolicy }}"
@@ -129,6 +137,12 @@ Create the name of the service account to use
     name: wallarm
   - mountPath: /usr/local/openresty/nginx/wallarm_acl_default
     name: wallarm-acl
+  securityContext:
+    {{- if .Values.podSecurityPolicy.enabled }}
+    runAsUser: {{ .Values.controller.image.runAsUser | default 65534 }}
+    {{- else }}
+    runAsUser: 0
+    {{- end }}
 {{- end -}}
 
 {{- define "nginx-ingress.wallarmSyncnodeContainer" -}}
@@ -161,7 +175,11 @@ Create the name of the service account to use
   - mountPath: /etc/wallarm
     name: wallarm
   securityContext:
+    {{- if .Values.podSecurityPolicy.enabled }}
+    runAsUser: {{ .Values.controller.image.runAsUser | default 65534 }}
+    {{- else }}
     runAsUser: 0
+    {{- end }}
   resources:
 {{ toYaml .Values.controller.wallarm.synccloud.resources | indent 4 }}
 {{- end -}}
@@ -177,6 +195,12 @@ Create the name of the service account to use
     name: wallarm-acl
   resources:
 {{ toYaml .Values.controller.wallarm.acl.resources | indent 4 }}
+  securityContext:
+    {{- if .Values.podSecurityPolicy.enabled }}
+    runAsUser: {{ .Values.controller.image.runAsUser | default 65534 }}
+    {{- else }}
+    runAsUser: 0
+    {{- end }}
 {{- end -}}
 
 {{- define "nginx-ingress.wallarmCollectdContainer" -}}
@@ -191,6 +215,12 @@ Create the name of the service account to use
       mountPath: /etc/collectd
   resources:
 {{ toYaml .Values.controller.wallarm.collectd.resources | indent 4 }}
+  securityContext:
+    {{- if .Values.podSecurityPolicy.enabled }}
+    runAsUser: {{ .Values.controller.image.runAsUser | default 65534 }}
+    {{- else }}
+    runAsUser: 0
+    {{- end }}
 {{- end -}}
 
 {{/*
