@@ -450,6 +450,7 @@ controller:
         servicePort: 9913
         type: ClusterIP
     synccloud:
+      wallarm_syncnode_interval_sec: 120
       resources: {}
     collectd:
       resources: {}

@@ -155,6 +155,8 @@ Create the name of the service account to use
     value: www-data
   - name: WALLARM_SYNCNODE_GROUP
     value: www-data
+  - name: WALLARM_SYNCNODE_INTERVAL
+    value: "{{ .Values.controller.wallarm.synccloud.wallarm_syncnode_interval_sec }}"
   volumeMounts:
   - mountPath: /etc/wallarm
     name: wallarm
