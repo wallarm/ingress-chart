@@ -418,6 +418,7 @@ controller:
     apiPort: 444
     apiSSL: true
     token: ""
+    fallback: "off"
     tarantool:
       kind: Deployment
       service:

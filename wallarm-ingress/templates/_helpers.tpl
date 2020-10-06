@@ -82,7 +82,11 @@ Create the name of the service account to use
   command:
   - sh
   - -c
-  - /usr/share/wallarm-common/synccloud --one-time && chmod 0644 /etc/wallarm/*
+{{- if eq .Values.controller.wallarm.fallback "on"}}
+{{ print  "- /usr/share/wallarm-common/synccloud --one-time && chmod 0644 /etc/wallarm/* || true" | indent 2}}
+{{- else }}
+{{ print  "- /usr/share/wallarm-common/synccloud --one-time && chmod 0644 /etc/wallarm/*" | indent 2}}
+{{- end}}
   env:
   - name: WALLARM_API_HOST
     value: {{ .Values.controller.wallarm.apiHost | default "api.wallarm.com" }}
@@ -123,7 +127,11 @@ Create the name of the service account to use
   command:
   - sh
   - -c
-  - /usr/local/openresty/nginx/sbin/nginx -c /etc/nginx/nginx-blacklistonly.conf && /usr/share/wallarm-common/sync-blacklist --one-time -l STDOUT
+{{- if eq .Values.controller.wallarm.fallback "on"}}
+{{ print  "- /usr/local/openresty/nginx/sbin/nginx -c /etc/nginx/nginx-blacklistonly.conf && /usr/share/wallarm-common/sync-blacklist --one-time -l STDOUT || true" | indent 2}}
+{{- else }}
+{{ print  "- /usr/local/openresty/nginx/sbin/nginx -c /etc/nginx/nginx-blacklistonly.conf && /usr/share/wallarm-common/sync-blacklist --one-time -l STDOUT" | indent 2}}
+{{- end}}
   volumeMounts:
   - mountPath: /etc/wallarm
     name: wallarm
