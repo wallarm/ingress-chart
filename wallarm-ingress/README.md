@@ -10,17 +10,7 @@ To use, add the `kubernetes.io/ingress.class: nginx` annotation to your Ingress 
 
 ## TL;DR;
 
-```console
-$ helm repo add wallarm https://repo.wallarm.com/charts/stable
-$ helm repo update
-$ helm install wallarm/wallarm-ingress
-```
-wallarm-ingress is designed to be a drop-in replacement of nginx-ingress, so we use the same ingress class `nginx`.
-If you want to install wallarm-ingress as the additional Ingress Controller, you should change ingress class i.e.
-
-```console
-$ helm install wallarm/wallarm-ingress --set controller.ingressClass=wallarm
-```
+https://docs.wallarm.com/admin-en/installation-kubernetes-en/
 
 ## Introduction
 
@@ -29,56 +19,6 @@ This chart bootstraps an wallarm-ingress deployment on a [Kubernetes](http://kub
 ## Prerequisites
 
   - Kubernetes 1.6+
-
-## Installing the Chart
-
-To install the chart with the release name `my-release`:
-
-Helm v2
-
-```console
-$ helm repo add wallarm https://repo.wallarm.com/charts/stable
-$ helm repo update
-$ helm install --name my-release wallarm/wallarm-ingress
-```
-
-Helm v3
-
-```console
-$ helm repo add wallarm https://repo.wallarm.com/charts/stable
-$ helm repo update
-$ helm install my-release wallarm/wallarm-ingress
-```
-
-The command deploys wallarm-ingress on the Kubernetes cluster in the default configuration. The [configuration](#configuration) section lists the parameters that can be configured during installation.
-
-By default Wallarm service is disabled. To enable Wallarm, you will need to obtain Cloud Node token and connect to the Wallarm cloud console.
-You can obtain the token from the [Wallarm Console](https://my.wallarm.com/settings/nodes). You would neeed to create a new node and copy the token.
-Install controller by the command
-
-Helm v2
-
-```console
-$ helm install --name my-release wallarm/wallarm-ingress --set controller.wallarm.enabled=true --set controller.wallarm.token=<CLOUD NODE TOKEN>
-```
-
-Helm v3
-
-```console
-$ helm install my-release wallarm/wallarm-ingress --set controller.wallarm.enabled=true --set controller.wallarm.token=<CLOUD NODE TOKEN>
-```
-
-> **Tip**: List all releases using `helm list` or `helm ls`
-
-## Uninstalling the Chart
-
-To uninstall/delete the `my-release` deployment:
-
-```console
-$ helm delete my-release
-```
-
-The command removes all the Kubernetes components associated with the chart and deletes the release.
 
 ## Configuration
 
