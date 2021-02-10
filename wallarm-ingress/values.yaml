@@ -431,6 +431,21 @@ controller:
         successThreshold: 1
         timeoutSeconds: 1
       resources: {}
+    heartbeat:
+      resources: {}
+    sync-markers:
+      resources: {}
+    export-attacks:
+      resources: {}
+    export-counters:
+      resources: {}
+    export-clusterization-data:
+      resources: {}
+    sync-brute-clusters:
+      resources: {}
+    brute-detect:
+      resources: {}
+
     metrics:
       enabled: false
 
