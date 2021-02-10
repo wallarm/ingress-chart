@@ -73,42 +73,56 @@ spec:
           volumeMounts:
           - mountPath: /etc/wallarm
             name: wallarm
+          resources:
+{{ toYaml .Values.controller.wallarm.heartbeat.resources | indent 12 }}
         - name: sync-markers
           image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag }}"
           command: ["sh", "-c", "while true; do timeout -k 1m 1h /usr/share/wallarm-common/sync-markers -l STDOUT || true; sleep 60; done"]
           volumeMounts:
           - mountPath: /etc/wallarm
             name: wallarm
+          resources:
+{{ toYaml .Values.controller.wallarm.sync-markers.resources | indent 12 }}
         - name: export-attacks
           image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag }}"
           command: ["sh", "-c", "while true; do timeout -k 1m 3h /usr/share/wallarm-common/export-attacks -l STDOUT || true; done"]
           volumeMounts:
           - mountPath: /etc/wallarm
             name: wallarm
+          resources:
+{{ toYaml .Values.controller.wallarm.export-attacks.resources | indent 12 }}
         - name: export-counters
           image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag }}"
           command: ["sh", "-c", "while true; do timeout -k 15s 11m /usr/share/wallarm-common/export-counters -l STDOUT || true; sleep 60; done"]
           volumeMounts:
           - mountPath: /etc/wallarm
             name: wallarm
+          resources:
+{{ toYaml .Values.controller.wallarm.export-counters.resources | indent 12 }}
         - name: export-clusterization-data
           image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag }}"
           command: ["sh", "-c", "while true; do timeout -k 15s 11m /usr/share/wallarm-common/export-clusterization-data -l STDOUT || true; sleep 60; done"]
           volumeMounts:
           - mountPath: /etc/wallarm
             name: wallarm
+          resources:
+{{ toYaml .Values.controller.wallarm.export-clusterization-data.resources | indent 12 }}
         - name: sync-brute-clusters
           image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag }}"
           command: ["sh", "-c", "while true; do timeout -k 15s 11m /usr/share/wallarm-common/sync-brute-clusters -l STDOUT || true; sleep 60; done"]
           volumeMounts:
           - mountPath: /etc/wallarm
             name: wallarm
+          resources:
+{{ toYaml .Values.controller.wallarm.sync-brute-clusters.resources | indent 12 }}
         - name: brute-detect
           image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag }}"
           command: ["sh", "-c", "while true; do timeout -k 15s 6m /usr/share/wallarm-common/brute-detect -l STDOUT || true; sleep 60; done"]
           volumeMounts:
           - mountPath: /etc/wallarm
             name: wallarm
+          resources:
+{{ toYaml .Values.controller.wallarm.brute-detect.resources | indent 12 }}
     {{- if .Values.controller.wallarm.tarantool.nodeSelector }}
       nodeSelector:
 {{ toYaml .Values.controller.wallarm.tarantool.nodeSelector | indent 8 }}
