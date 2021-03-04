@@ -106,6 +106,21 @@ Create the name of the service account to use
     runAsUser: 0
 {{- end -}}
 
+{{- define "nginx-ingress.wallarmExportEnvInitContainer" -}}
+- name: exportenv
+  image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag }}"
+  imagePullPolicy: "{{ .Values.controller.image.pullPolicy }}"
+  command:
+  - sh
+  - -c
+  - cd /usr/share/wallarm-common/ && /usr/share/wallarm-common/export-environment -l /dev/stdout
+  volumeMounts:
+  - mountPath: /etc/wallarm
+    name: wallarm
+  securityContext:
+    runAsUser: 0
+{{- end -}}
+
 {{- define "nginx-ingress.wallarmInitContainerAcl" -}}
 - name: add-aclurl
   image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag }}"

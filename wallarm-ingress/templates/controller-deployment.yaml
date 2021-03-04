@@ -180,6 +180,7 @@ spec:
       initContainers:
 {{- if .Values.controller.wallarm.enabled }}
 {{ include "nginx-ingress.wallarmInitContainer" . | indent 8 }}
+{{ include "nginx-ingress.wallarmExportEnvInitContainer" . | indent 8 }}
 {{- if .Values.controller.wallarm.acl.enabled }}
 {{ include "nginx-ingress.wallarmInitContainerAcl" . | indent 8 }}
 {{- end }}
