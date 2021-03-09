@@ -104,6 +104,8 @@ Create the name of the service account to use
     name: wallarm
   securityContext:
     runAsUser: 0
+  resources:
+{{ toYaml .Values.controller.wallarm.addnode.resources | indent 4 }}
 {{- end -}}
 
 {{- define "nginx-ingress.wallarmExportEnvInitContainer" -}}
@@ -119,6 +121,8 @@ Create the name of the service account to use
     name: wallarm
   securityContext:
     runAsUser: 0
+  resources:
+{{ toYaml .Values.controller.wallarm.exportenv.resources | indent 4 }}
 {{- end -}}
 
 {{- define "nginx-ingress.wallarmInitContainerAcl" -}}
@@ -132,6 +136,8 @@ Create the name of the service account to use
     name: wallarm
   securityContext:
     runAsUser: 0
+  resources:
+{{ toYaml (index .Values "controller" "wallarm" "add-aclurl" "resources") | indent 4 }}
 - name: add-blacklist
   image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag }}"
   imagePullPolicy: "{{ .Values.controller.image.pullPolicy }}"
@@ -144,6 +150,8 @@ Create the name of the service account to use
     name: wallarm
   - mountPath: /usr/local/openresty/nginx/wallarm_acl_default
     name: wallarm-acl
+  resources:
+{{ toYaml (index .Values "controller" "wallarm" "add-blacklist" "resources") | indent 4 }}
 {{- end -}}
 
 {{- define "nginx-ingress.wallarmSyncnodeContainer" -}}
