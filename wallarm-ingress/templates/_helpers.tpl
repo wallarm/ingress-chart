@@ -186,7 +186,7 @@ Create the name of the service account to use
   securityContext:
     runAsUser: 0
   resources:
-{{ toYaml (index .Values "controller" "wallarm" "synccloud" "resources") | indent 4 }}
+{{ toYaml .Values.controller.wallarm.synccloud.resources | indent 4 }}
 {{- end -}}
 
 {{- define "nginx-ingress.wallarmSyncAclContainer" -}}
@@ -199,7 +199,7 @@ Create the name of the service account to use
   - mountPath: /usr/local/openresty/nginx/wallarm_acl_default
     name: wallarm-acl
   resources:
-{{ toYaml (index .Values "controller" "wallarm" "acl" "resources") | indent 4 }}
+{{ toYaml .Values.controller.wallarm.acl.resources | indent 4 }}
 {{- end -}}
 
 {{- define "nginx-ingress.wallarmCollectdContainer" -}}
@@ -213,7 +213,7 @@ Create the name of the service account to use
     - name: collectd-config
       mountPath: /etc/collectd
   resources:
-{{ toYaml (index .Values "controller" "wallarm" "collectd" "resources") | indent 4 }}
+{{ toYaml .Values.controller.wallarm.collectd.resources | indent 4 }}
 {{- end -}}
 
 {{/*
