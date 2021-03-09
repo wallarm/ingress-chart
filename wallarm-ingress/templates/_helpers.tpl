@@ -105,7 +105,7 @@ Create the name of the service account to use
   securityContext:
     runAsUser: 0
   resources:
-{{ toYaml (index .Values "controller" "wallarm" "addnode" "resources") | indent 4 }}
+{{ toYaml .Values.controller.wallarm.addnode.resources | indent 4 }}
 {{- end -}}
 
 {{- define "nginx-ingress.wallarmExportEnvInitContainer" -}}
@@ -122,7 +122,7 @@ Create the name of the service account to use
   securityContext:
     runAsUser: 0
   resources:
-{{ toYaml (index .Values "controller" "wallarm" "exportenv" "resources") | indent 4 }}
+{{ toYaml .Values.controller.wallarm.exportenv.resources | indent 4 }}
 {{- end -}}
 
 {{- define "nginx-ingress.wallarmInitContainerAcl" -}}
