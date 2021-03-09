@@ -445,7 +445,14 @@ controller:
       resources: {}
     brute-detect:
       resources: {}
-
+    addnode:
+      resources: {}
+    exportenv:
+      resources: {}
+    add-blacklist:
+      resources: {}
+    add-aclurl:
+      resources: {}
     metrics:
       enabled: false
 
