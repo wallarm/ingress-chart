@@ -82,7 +82,11 @@ Create the name of the service account to use
   command:
   - sh
   - -c
-  - /usr/share/wallarm-common/synccloud --one-time && chmod 0644 /etc/wallarm/*
+{{- if eq .Values.controller.wallarm.fallback "on"}}
+{{ print  "- /usr/share/wallarm-common/synccloud --one-time && chmod 0644 /etc/wallarm/* || true" | indent 2}}
+{{- else }}
+{{ print  "- /usr/share/wallarm-common/synccloud --one-time && chmod 0644 /etc/wallarm/*" | indent 2}}
+{{- end}}
   env:
   - name: WALLARM_API_HOST
     value: {{ .Values.controller.wallarm.apiHost | default "api.wallarm.com" }}
@@ -108,6 +112,33 @@ Create the name of the service account to use
     {{- else }}
     runAsUser: 0
     {{- end }}
+  resources:
+{{ toYaml .Values.controller.wallarm.addnode.resources | indent 4 }}
+{{- end -}}
+
+{{- define "nginx-ingress.wallarmExportEnvInitContainer" -}}
+- name: exportenv
+  image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag }}"
+  imagePullPolicy: "{{ .Values.controller.image.pullPolicy }}"
+  command:
+  - sh
+  - -c
+{{- if eq .Values.controller.wallarm.fallback "on"}}
+{{ print  "- cd /usr/share/wallarm-common/ && /usr/share/wallarm-common/export-environment -l /dev/stdout || true" | indent 2}}
+{{- else }}
+{{ print  "- cd /usr/share/wallarm-common/ && /usr/share/wallarm-common/export-environment -l /dev/stdout" | indent 2}}
+{{- end}}
+  volumeMounts:
+  - mountPath: /etc/wallarm
+    name: wallarm
+  securityContext:
+    {{- if .Values.podSecurityPolicy.enabled }}
+    runAsUser: {{ .Values.controller.image.runAsUser | default 65534 }}
+    {{- else }}
+    runAsUser: 0
+    {{- end }}
+  resources:
+{{ toYaml .Values.controller.wallarm.exportenv.resources | indent 4 }}
 {{- end -}}
 
 {{- define "nginx-ingress.wallarmInitContainerAcl" -}}
@@ -125,18 +156,26 @@ Create the name of the service account to use
     {{- else }}
     runAsUser: 0
     {{- end }}
+  resources:
+{{ toYaml (index .Values "controller" "wallarm" "add-aclurl" "resources") | indent 4 }}
 - name: add-blacklist
   image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag }}"
   imagePullPolicy: "{{ .Values.controller.image.pullPolicy }}"
   command:
   - sh
   - -c
-  - /usr/local/openresty/nginx/sbin/nginx -c /etc/nginx/nginx-blacklistonly.conf && /usr/share/wallarm-common/sync-blacklist --one-time -l STDOUT
+{{- if eq .Values.controller.wallarm.fallback "on"}}
+{{ print  "- /usr/local/openresty/nginx/sbin/nginx -c /etc/nginx/nginx-blacklistonly.conf && /usr/share/wallarm-common/sync-blacklist --one-time -l STDOUT || true" | indent 2}}
+{{- else }}
+{{ print  "- /usr/local/openresty/nginx/sbin/nginx -c /etc/nginx/nginx-blacklistonly.conf && /usr/share/wallarm-common/sync-blacklist --one-time -l STDOUT" | indent 2}}
+{{- end}}
   volumeMounts:
   - mountPath: /etc/wallarm
     name: wallarm
   - mountPath: /usr/local/openresty/nginx/wallarm_acl_default
     name: wallarm-acl
+  resources:
+{{ toYaml (index .Values "controller" "wallarm" "add-blacklist" "resources") | indent 4 }}
   securityContext:
     {{- if .Values.podSecurityPolicy.enabled }}
     runAsUser: {{ .Values.controller.image.runAsUser | default 65534 }}

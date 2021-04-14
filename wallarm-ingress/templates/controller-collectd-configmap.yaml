@@ -52,10 +52,19 @@ data:
         <Key "requests_lost">
           Type gauge
         </Key>
+        <Key "overlimits_time">
+          Type gauge
+        </Key>
         <Key "segfaults">
           Type gauge
         </Key>
         <Key "memfaults">
+          Type gauge
+        </Key>
+        <Key "softmemfaults">
+          Type gauge
+        </Key>
+        <Key "proton_errors">
           Type gauge
         </Key>
         <Key "stalled_workers">
@@ -64,13 +73,16 @@ data:
         <Key "time_detect">
           Type gauge
         </Key>
-        <Key "time_tnt">
-          Type gauge
-        </Key>
         <Key "db_id">
           Type gauge
         </Key>
         <Key "lom_id">
+          Type gauge
+        </Key>
+        <Key "db_apply_time">
+          Type gauge
+        </Key>
+        <Key "lom_apply_time">
           Type gauge
         </Key>
         <Key "proton_instances/total">
@@ -83,6 +95,9 @@ data:
           Type gauge
         </Key>
         <Key "proton_instances/failed">
+          Type gauge
+        </Key>
+        <Key "startid">
           Type gauge
         </Key>
       </URL>
@@ -109,19 +124,25 @@ data:
         <Key "requests_lost">
           Type derive
         </Key>
+        <Key "overlimits_time">
+          Type derive
+        </Key>
         <Key "segfaults">
           Type derive
         </Key>
         <Key "memfaults">
           Type derive
         </Key>
+        <Key "softmemfaults">
+          Type derive
+        </Key>
+        <Key "proton_errors">
+          Type derive
+        </Key>
         <Key "stalled_workers">
           Type derive
         </Key>
         <Key "time_detect">
-          Type derive
-        </Key>
-        <Key "time_tnt">
           Type derive
         </Key>
       </URL>
@@ -139,7 +160,7 @@ data:
     </Plugin>
 
     <Plugin python>
-      ModulePath "/usr/lib/collectd/python"
+      ModulePath "/usr/lib/wallarm-collectd/python"
 
       Import WallarmAPIWriter
     </Plugin>
