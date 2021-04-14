@@ -42,6 +42,10 @@ spec:
               value: "{{ .Values.controller.wallarm.tarantool.arena }}"
             - name: HOST
               value: "0.0.0.0"
+          {{- if .Values.podSecurityPolicy.enabled }}
+          securityContext:
+            runAsUser: {{ .Values.controller.image.runAsUser | default 65534 }}
+          {{- end }}
           livenessProbe:
             tcpSocket:
               port: {{ template "nginx-ingress.wallarmTarantoolPort" . }}
@@ -76,6 +80,10 @@ spec:
                 name: {{ template "nginx-ingress.wallarmSecret" . }}
           - name: WALLARM_SYNCNODE
             value: "no"
+          {{- if .Values.podSecurityPolicy.enabled }}
+          securityContext:
+            runAsUser: {{ .Values.controller.image.runAsUser | default 65534 }}
+          {{- end }}
           volumeMounts:
           - mountPath: /etc/wallarm
             name: wallarm
@@ -84,6 +92,10 @@ spec:
         - name: sync-markers
           image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag }}"
           command: ["sh", "-c", "while true; do timeout -k 1m 1h /usr/share/wallarm-common/sync-markers -l STDOUT || true; sleep 60; done"]
+          {{- if .Values.podSecurityPolicy.enabled }}
+          securityContext:
+            runAsUser: {{ .Values.controller.image.runAsUser | default 65534 }}
+          {{- end }}
           volumeMounts:
           - mountPath: /etc/wallarm
             name: wallarm
@@ -92,6 +104,10 @@ spec:
         - name: export-attacks
           image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag }}"
           command: ["sh", "-c", "while true; do timeout -k 1m 3h /usr/share/wallarm-common/export-attacks -l STDOUT || true; done"]
+          {{- if .Values.podSecurityPolicy.enabled }}
+          securityContext:
+            runAsUser: {{ .Values.controller.image.runAsUser | default 65534 }}
+          {{- end }}
           volumeMounts:
           - mountPath: /etc/wallarm
             name: wallarm
@@ -100,6 +116,10 @@ spec:
         - name: export-counters
           image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag }}"
           command: ["sh", "-c", "while true; do timeout -k 15s 11m /usr/share/wallarm-common/export-counters -l STDOUT || true; sleep 60; done"]
+          {{- if .Values.podSecurityPolicy.enabled }}
+          securityContext:
+            runAsUser: {{ .Values.controller.image.runAsUser | default 65534 }}
+          {{- end }}
           volumeMounts:
           - mountPath: /etc/wallarm
             name: wallarm
@@ -108,6 +128,10 @@ spec:
         - name: export-clusterization-data
           image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag }}"
           command: ["sh", "-c", "while true; do timeout -k 15s 11m /usr/share/wallarm-common/export-clusterization-data -l STDOUT || true; sleep 60; done"]
+          {{- if .Values.podSecurityPolicy.enabled }}
+          securityContext:
+            runAsUser: {{ .Values.controller.image.runAsUser | default 65534 }}
+          {{- end }}
           volumeMounts:
           - mountPath: /etc/wallarm
             name: wallarm
@@ -115,6 +139,10 @@ spec:
 {{ toYaml (index .Values "controller" "wallarm" "export-clusterization-data" "resources") | indent 12 }}
         - name: sync-brute-clusters
           image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag }}"
+          {{- if .Values.podSecurityPolicy.enabled }}
+          securityContext:
+            runAsUser: {{ .Values.controller.image.runAsUser | default 65534 }}
+          {{- end }}
           command: ["sh", "-c", "while true; do timeout -k 15s 11m /usr/share/wallarm-common/sync-brute-clusters -l STDOUT || true; sleep 60; done"]
           volumeMounts:
           - mountPath: /etc/wallarm
@@ -124,6 +152,10 @@ spec:
         - name: brute-detect
           image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag }}"
           command: ["sh", "-c", "while true; do timeout -k 15s 6m /usr/share/wallarm-common/brute-detect -l STDOUT || true; sleep 60; done"]
+          {{- if .Values.podSecurityPolicy.enabled }}
+          securityContext:
+            runAsUser: {{ .Values.controller.image.runAsUser | default 65534 }}
+          {{- end }}
           volumeMounts:
           - mountPath: /etc/wallarm
             name: wallarm
