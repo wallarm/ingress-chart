@@ -156,6 +156,18 @@ spec:
             name: wallarm
           resources:
 {{ toYaml (index .Values "controller" "wallarm" "brute-detect" "resources") | indent 12 }}
+        - name: wallarm-appstructure
+          image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag }}"
+          command: ["/usr/bin/wallarm-appstructure-client", "--config-file", "/etc/wallarm/node.yaml"]
+          volumeMounts:
+          - mountPath: /etc/wallarm
+            name: wallarm
+          {{- if .Values.podSecurityPolicy.enabled }}
+          securityContext:
+            runAsUser: {{ .Values.controller.image.runAsUser | default 65534 }}
+          {{- end }}
+          resources:
+{{ toYaml (index .Values "controller" "wallarm" "wallarm-appstructure" "resources") | indent 12 }}
     {{- if .Values.controller.wallarm.tarantool.nodeSelector }}
       nodeSelector:
 {{ toYaml .Values.controller.wallarm.tarantool.nodeSelector | indent 8 }}
