@@ -5,7 +5,7 @@ controller:
   name: controller
   image:
     repository: wallarm/nginx-ingress-controller
-    tag: "2.16.0-4"
+    tag: "2.16.0-5"
     pullPolicy: IfNotPresent
     # www-data -> uid 33
     runAsUser: 33
