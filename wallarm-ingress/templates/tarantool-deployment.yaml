@@ -188,5 +188,7 @@ spec:
       volumes:
         - name: wallarm
           emptyDir: {}
+        - name: wallarm-acl
+          emptyDir: {}
 {{- end }}
 {{- end }}

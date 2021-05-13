@@ -5,7 +5,7 @@ controller:
   name: controller
   image:
     repository: wallarm/nginx-ingress-controller
-    tag: "2.18.1-4"
+    tag: "3.0.0-1"
     pullPolicy: IfNotPresent
     # www-data -> uid 33
     runAsUser: 33
@@ -450,10 +450,6 @@ controller:
       resources: {}
     exportenv:
       resources: {}
-    add-blacklist:
-      resources: {}
-    add-aclurl:
-      resources: {}
     metrics:
       enabled: false
 
@@ -478,7 +474,6 @@ controller:
     collectd:
       resources: {}
     acl:
-      enabled: false
       resources: {}
     wallarm-appstructure:
       resources: {}
