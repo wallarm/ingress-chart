@@ -480,6 +480,8 @@ controller:
     acl:
       enabled: false
       resources: {}
+    wallarm-appstructure:
+      resources: {}
 
 ## Rollback limit
 ##
