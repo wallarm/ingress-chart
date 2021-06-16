@@ -83,9 +83,9 @@ Create the name of the service account to use
   - sh
   - -c
 {{- if eq .Values.controller.wallarm.fallback "on"}}
-{{ print  "- /usr/share/wallarm-common/synccloud --one-time && chmod 0644 /etc/wallarm/* || true" | indent 2}}
+{{ print  "- /usr/share/wallarm-common/synccloud --one-time && /usr/share/wallarm-common/sync-blacklist --one-time -l STDOUT && /usr/share/wallarm-common/sync-mmdb --one-time -l STDOUT && chmod 0644 /etc/wallarm/* || true" | indent 2}}
 {{- else }}
-{{ print  "- /usr/share/wallarm-common/synccloud --one-time && chmod 0644 /etc/wallarm/*" | indent 2}}
+{{ print  "- /usr/share/wallarm-common/synccloud --one-time && /usr/share/wallarm-common/sync-blacklist --one-time -l STDOUT && /usr/share/wallarm-common/sync-mmdb --one-time -l STDOUT && chmod 0644 /etc/wallarm/*" | indent 2}}
 {{- end}}
   env:
   - name: WALLARM_API_HOST
@@ -110,6 +110,8 @@ Create the name of the service account to use
   volumeMounts:
   - mountPath: /etc/wallarm
     name: wallarm
+  - mountPath: /var/lib/wallarm-acl
+    name: wallarm-acl
   securityContext:
     {{- if .Values.podSecurityPolicy.enabled }}
     runAsUser: {{ .Values.controller.image.runAsUser | default 65534 }}
@@ -143,49 +145,6 @@ Create the name of the service account to use
     {{- end }}
   resources:
 {{ toYaml .Values.controller.wallarm.exportenv.resources | indent 4 }}
-{{- end -}}
-
-{{- define "nginx-ingress.wallarmInitContainerAcl" -}}
-- name: add-aclurl
-  image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag }}"
-  imagePullPolicy: "{{ .Values.controller.image.pullPolicy }}"
-  command: ["/bin/sh", "-c"]
-  args: ["/usr/bin/printf 'sync_blacklist:\n    nginx_url: http://127.0.0.1:18080/wallarm-acl' >> /etc/wallarm/node.yaml"]
-  volumeMounts:
-  - mountPath: /etc/wallarm
-    name: wallarm
-  securityContext:
-    {{- if .Values.podSecurityPolicy.enabled }}
-    runAsUser: {{ .Values.controller.image.runAsUser | default 65534 }}
-    {{- else }}
-    runAsUser: 0
-    {{- end }}
-  resources:
-{{ toYaml (index .Values "controller" "wallarm" "add-aclurl" "resources") | indent 4 }}
-- name: add-blacklist
-  image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag }}"
-  imagePullPolicy: "{{ .Values.controller.image.pullPolicy }}"
-  command:
-  - sh
-  - -c
-{{- if eq .Values.controller.wallarm.fallback "on"}}
-{{ print  "- /usr/local/openresty/nginx/sbin/nginx -c /etc/nginx/nginx-blacklistonly.conf && /usr/share/wallarm-common/sync-blacklist --one-time -l STDOUT || true" | indent 2}}
-{{- else }}
-{{ print  "- /usr/local/openresty/nginx/sbin/nginx -c /etc/nginx/nginx-blacklistonly.conf && /usr/share/wallarm-common/sync-blacklist --one-time -l STDOUT" | indent 2}}
-{{- end}}
-  volumeMounts:
-  - mountPath: /etc/wallarm
-    name: wallarm
-  - mountPath: /usr/local/openresty/nginx/wallarm_acl_default
-    name: wallarm-acl
-  resources:
-{{ toYaml (index .Values "controller" "wallarm" "add-blacklist" "resources") | indent 4 }}
-  securityContext:
-    {{- if .Values.podSecurityPolicy.enabled }}
-    runAsUser: {{ .Values.controller.image.runAsUser | default 65534 }}
-    {{- else }}
-    runAsUser: 0
-    {{- end }}
 {{- end -}}
 
 {{- define "nginx-ingress.wallarmSyncnodeContainer" -}}
@@ -238,7 +197,23 @@ Create the name of the service account to use
   volumeMounts:
   - mountPath: /etc/wallarm
     name: wallarm
-  - mountPath: /usr/local/openresty/nginx/wallarm_acl_default
+  - mountPath: /var/lib/wallarm-acl
+    name: wallarm-acl
+  resources:
+{{ toYaml .Values.controller.wallarm.acl.resources | indent 4 }}
+  securityContext:
+    {{- if .Values.podSecurityPolicy.enabled }}
+    runAsUser: {{ .Values.controller.image.runAsUser | default 65534 }}
+    {{- else }}
+    runAsUser: 0
+    {{- end }}
+- name: sync-mmdb
+  image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag }}"
+  command: ["sh", "-c", "while true; do timeout -k 15s 3h /usr/share/wallarm-common/sync-mmdb -l STDOUT || true; sleep 300; done"]
+  volumeMounts:
+  - mountPath: /etc/wallarm
+    name: wallarm
+  - mountPath: /var/lib/wallarm-acl
     name: wallarm-acl
   resources:
 {{ toYaml .Values.controller.wallarm.acl.resources | indent 4 }}
