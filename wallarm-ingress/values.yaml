@@ -475,6 +475,8 @@ controller:
       resources: {}
     acl:
       resources: {}
+    mmdb:
+      resources: {}
     wallarm-appstructure:
       resources: {}
 

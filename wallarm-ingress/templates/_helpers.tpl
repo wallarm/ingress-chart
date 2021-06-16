@@ -216,7 +216,7 @@ Create the name of the service account to use
   - mountPath: /var/lib/wallarm-acl
     name: wallarm-acl
   resources:
-{{ toYaml .Values.controller.wallarm.acl.resources | indent 4 }}
+{{ toYaml .Values.controller.wallarm.mmdb.resources | indent 4 }}
   securityContext:
     {{- if .Values.podSecurityPolicy.enabled }}
     runAsUser: {{ .Values.controller.image.runAsUser | default 65534 }}
