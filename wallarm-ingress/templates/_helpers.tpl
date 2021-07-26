@@ -122,18 +122,11 @@ Create the name of the service account to use
 {{ toYaml .Values.controller.wallarm.addnode.resources | indent 4 }}
 {{- end -}}
 
-{{- define "nginx-ingress.wallarmExportEnvInitContainer" -}}
+{{- define "nginx-ingress.wallarmExportEnvContainer" -}}
 - name: exportenv
   image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag }}"
   imagePullPolicy: "{{ .Values.controller.image.pullPolicy }}"
-  command:
-  - sh
-  - -c
-{{- if eq .Values.controller.wallarm.fallback "on"}}
-{{ print  "- cd /usr/share/wallarm-common/ && /usr/share/wallarm-common/export-environment -l /dev/stdout || true" | indent 2}}
-{{- else }}
-{{ print  "- cd /usr/share/wallarm-common/ && /usr/share/wallarm-common/export-environment -l /dev/stdout" | indent 2}}
-{{- end}}
+  command: ["sh", "-c", "while true; do timeout -k 15s 10m /usr/share/wallarm-common/export-environment -l STDOUT || true; sleep 3600; done"]
   volumeMounts:
   - mountPath: /etc/wallarm
     name: wallarm

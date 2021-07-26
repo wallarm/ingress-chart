@@ -29,8 +29,8 @@ spec:
       {{- end }}
       initContainers:
 {{ include "nginx-ingress.wallarmInitContainer" . | indent 8 }}
-{{ include "nginx-ingress.wallarmExportEnvInitContainer" . | indent 8 }}
       containers:
+{{ include "nginx-ingress.wallarmExportEnvContainer" . | indent 8 }}
         - name: tarantool
           image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag }}"
           imagePullPolicy: "{{ .Values.controller.image.pullPolicy }}"

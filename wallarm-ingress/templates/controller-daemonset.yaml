@@ -175,6 +175,7 @@ spec:
 {{ include "nginx-ingress.wallarmCollectdContainer" . | indent 8 }}
 {{ include "nginx-ingress.wallarmSyncnodeContainer" . | indent 8 }}
 {{ include "nginx-ingress.wallarmSyncAclContainer" . | indent 8 }}
+{{ include "nginx-ingress.wallarmExportEnvContainer" . | indent 8 }}
 {{- end }}
 {{- if .Values.controller.extraContainers }}
 {{ toYaml .Values.controller.extraContainers | indent 8}}
@@ -182,7 +183,6 @@ spec:
       initContainers:
 {{- if .Values.controller.wallarm.enabled }}
 {{ include "nginx-ingress.wallarmInitContainer" . | indent 8 }}
-{{ include "nginx-ingress.wallarmExportEnvInitContainer" . | indent 8 }}
 {{- end }}
 {{- if .Values.controller.extraInitContainers }}
 {{ toYaml .Values.controller.extraInitContainers | indent 8}}
