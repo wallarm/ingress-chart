@@ -83,9 +83,9 @@ Create the name of the service account to use
   - sh
   - -c
 {{- if eq .Values.controller.wallarm.fallback "on"}}
-{{ print  "- /usr/share/wallarm-common/synccloud --one-time && /usr/share/wallarm-common/sync-blacklist --one-time -l STDOUT && /usr/share/wallarm-common/sync-mmdb --one-time -l STDOUT && chmod 0644 /etc/wallarm/* || true" | indent 2}}
+{{ print  "- /usr/share/wallarm-common/synccloud --one-time && /usr/share/wallarm-common/sync-ip-lists --one-time -l STDOUT && /usr/share/wallarm-common/sync-ip-lists-source --one-time -l STDOUT && chmod 0644 /etc/wallarm/* || true" | indent 2}}
 {{- else }}
-{{ print  "- /usr/share/wallarm-common/synccloud --one-time && /usr/share/wallarm-common/sync-blacklist --one-time -l STDOUT && /usr/share/wallarm-common/sync-mmdb --one-time -l STDOUT && chmod 0644 /etc/wallarm/*" | indent 2}}
+{{ print  "- /usr/share/wallarm-common/synccloud --one-time && /usr/share/wallarm-common/sync-ip-lists --one-time -l STDOUT && /usr/share/wallarm-common/sync-ip-lists-source --one-time -l STDOUT && chmod 0644 /etc/wallarm/*" | indent 2}}
 {{- end}}
   env:
   - name: WALLARM_API_HOST
@@ -191,9 +191,9 @@ Create the name of the service account to use
 {{- end -}}
 
 {{- define "nginx-ingress.wallarmSyncAclContainer" -}}
-- name: sync-blacklist
+- name: sync-ip-lists
   image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag }}"
-  command: ["sh", "-c", "while true; do timeout -k 15s 3h /usr/share/wallarm-common/sync-blacklist -l STDOUT || true; sleep 60; done"]
+  command: ["sh", "-c", "while true; do timeout -k 15s 3h /usr/share/wallarm-common/sync-ip-lists -l STDOUT || true; sleep 60; done"]
   volumeMounts:
   - mountPath: /etc/wallarm
     name: wallarm
@@ -207,9 +207,9 @@ Create the name of the service account to use
     {{- else }}
     runAsUser: 0
     {{- end }}
-- name: sync-mmdb
+- name: sync-ip-lists-source
   image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag }}"
-  command: ["sh", "-c", "while true; do timeout -k 15s 3h /usr/share/wallarm-common/sync-mmdb -l STDOUT || true; sleep 300; done"]
+  command: ["sh", "-c", "while true; do timeout -k 15s 3h /usr/share/wallarm-common/sync-ip-lists-source -l STDOUT || true; sleep 300; done"]
   volumeMounts:
   - mountPath: /etc/wallarm
     name: wallarm
