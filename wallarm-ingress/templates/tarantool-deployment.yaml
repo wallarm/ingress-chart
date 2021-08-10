@@ -77,6 +77,12 @@ spec:
             {{- else }}
             value: "false"
             {{- end }}
+          - name: WALLARM_API_CA_VERIFY
+            {{- if or (.Values.controller.wallarm.apiCAVerify) (eq (.Values.controller.wallarm.apiCAVerify | toString) "<nil>") }}
+            value: "true"
+            {{- else }}
+            value: "false"
+            {{- end }}
           - name: WALLARM_API_TOKEN
             valueFrom:
               secretKeyRef:

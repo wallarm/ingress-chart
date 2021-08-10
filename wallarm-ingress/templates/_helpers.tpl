@@ -98,6 +98,12 @@ Create the name of the service account to use
     {{- else }}
     value: "false"
     {{- end }}
+  - name: WALLARM_API_CA_VERIFY
+    {{- if or (.Values.controller.wallarm.apiCAVerify) (eq (.Values.controller.wallarm.apiCAVerify | toString) "<nil>") }}
+    value: "true"
+    {{- else }}
+    value: "false"
+    {{- end }}
   - name: WALLARM_API_TOKEN
     valueFrom:
       secretKeyRef:
@@ -155,6 +161,12 @@ Create the name of the service account to use
     value: {{ .Values.controller.wallarm.apiPort | default "444" | quote }}
   - name: WALLARM_API_USE_SSL
     {{- if or (.Values.controller.wallarm.apiSSL) (eq (.Values.controller.wallarm.apiSSL | toString) "<nil>") }}
+    value: "true"
+    {{- else }}
+    value: "false"
+    {{- end }}
+  - name: WALLARM_API_CA_VERIFY
+    {{- if or (.Values.controller.wallarm.apiCAVerify) (eq (.Values.controller.wallarm.apiCAVerify | toString) "<nil>") }}
     value: "true"
     {{- else }}
     value: "false"
