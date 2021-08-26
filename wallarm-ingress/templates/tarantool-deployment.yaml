@@ -34,7 +34,7 @@ spec:
         - name: tarantool
           image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag }}"
           imagePullPolicy: "{{ .Values.controller.image.pullPolicy }}"
-          args: ["/usr/bin/tarantool", "/usr/share/wallarm-tarantool/init.lua"]
+          args: ["/usr/bin/wtarantool", "/usr/share/wallarm-tarantool/init.lua"]
           env:
             - name: LOGFILE
               value: /dev/stdout
