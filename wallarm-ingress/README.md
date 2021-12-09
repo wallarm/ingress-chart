@@ -17,7 +17,7 @@ To deploy the Wallarm WAF Ingress controller with default `values.yaml`:
 2. Clone this repository by using the command:
 
     ```
-    git clone https://github.com/wallarm/ingress-chart --branch 2.18.1-7 --single-branch
+    git clone https://github.com/wallarm/ingress-chart --branch stable/3.4 --single-branch
     ```
 3. Install the Wallarm WAF Ingress controller chart by using the command:
 
