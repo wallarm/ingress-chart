@@ -14,8 +14,11 @@ data:
   enable-wallarm: "{{ .Values.controller.wallarm.enabled }}"
   wallarm-upstream-service: "{{ .Release.Namespace }}/{{ template "nginx-ingress.controller.fullname" . }}-wallarm-tarantool"
 {{- end }}
-{{- if .Values.controller.headers }}
-  proxy-set-headers: {{ .Release.Namespace }}/{{ template "nginx-ingress.fullname" . }}-custom-headers
+{{- if .Values.controller.addHeaders }}
+  add-headers: {{ .Release.Namespace }}/{{ template "nginx-ingress.fullname" . }}-custom-add-headers
+{{- end }}
+{{- if or .Values.controller.proxySetHeaders .Values.controller.headers }}
+  proxy-set-headers: {{ .Release.Namespace }}/{{ template "nginx-ingress.fullname" . }}-custom-proxy-headers
 {{- end }}
 {{- if .Values.controller.wallarm.fallback }}
   wallarm-fallback: "{{ .Values.controller.wallarm.fallback }}"
