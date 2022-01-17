@@ -6,7 +6,7 @@ This chart bootstraps [wallarm-ingress](https://github.com/wallarm/ingress) depl
 
 ## Requirements
 
-* Kubernetes platform version 1.20 and lower
+* Kubernetes platform version 1.21 and lower
 * Helm package manager
 
 ## Deployment
