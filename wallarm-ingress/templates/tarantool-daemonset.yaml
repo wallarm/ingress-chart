@@ -31,16 +31,12 @@ spec:
       containers:
 {{ include "nginx-ingress.wallarmExportEnvContainer" . | indent 8 }}
         - name: tarantool
-          image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag }}"
-          imagePullPolicy: "{{ .Values.controller.image.pullPolicy }}"
-          args: ["/usr/bin/wtarantool", "/usr/share/wallarm-tarantool/init.lua"]
+          image: "dmikhin/ingress-tarantool:latest"
+#          imagePullPolicy: "{{ .Values.controller.image.pullPolicy }}"
+          imagePullPolicy: "Always"
           env:
-            - name: LOGFILE
-              value: /dev/stdout
             - name: SLAB_ALLOC_ARENA
               value: "{{ .Values.controller.wallarm.tarantool.arena }}"
-            - name: HOST
-              value: "0.0.0.0"
           {{- if .Values.podSecurityPolicy.enabled }}
           securityContext:
             runAsUser: {{ .Values.controller.image.runAsUser | default 65534 }}
@@ -57,9 +53,6 @@ spec:
             - name: tarantool
               containerPort: {{ template "nginx-ingress.wallarmTarantoolPort" . }}
               protocol: TCP
-          volumeMounts:
-            - name: wallarm
-              mountPath: /etc/wallarm
           resources:
 {{ toYaml .Values.controller.wallarm.tarantool.resources | indent 12 }}
         - name: heartbeat
