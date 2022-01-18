@@ -207,9 +207,6 @@ spec:
           emptyDir: {}
         - name: wallarm
           emptyDir: {}
-        - name: collectd-config
-          configMap:
-            name: {{ template "nginx-ingress.controller.fullname" . }}-collectd
 {{- if .Values.controller.customTemplate.configMapName }}
         - name: nginx-template-volume
           configMap:

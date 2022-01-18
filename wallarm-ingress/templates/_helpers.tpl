@@ -220,14 +220,12 @@ Create the name of the service account to use
 
 {{- define "nginx-ingress.wallarmCollectdContainer" -}}
 - name: collectd
-  image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag }}"
-  imagePullPolicy: "{{ .Values.controller.image.pullPolicy }}"
-  args: ["/usr/sbin/collectd", "-f"]
+  image: "dmikhin/ingress-collectd:latest"
+  imagePullPolicy: "Always"
+#  imagePullPolicy: "{{ .Values.controller.image.pullPolicy }}"
   volumeMounts:
     - name: wallarm
       mountPath: /etc/wallarm
-    - name: collectd-config
-      mountPath: /etc/collectd
   resources:
 {{ toYaml .Values.controller.wallarm.collectd.resources | indent 4 }}
   securityContext:
