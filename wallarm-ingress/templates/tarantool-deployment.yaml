@@ -57,8 +57,10 @@ spec:
           resources:
 {{ toYaml .Values.controller.wallarm.tarantool.resources | indent 12 }}
         - name: heartbeat
-          image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag }}"
-          command: ["/usr/share/wallarm-common/synccloud"]
+          image: "dmikhin/ingress-ruby:latest"
+          imagePullPolicy: "Always"
+          #imagePullPolicy: "{{ .Values.controller.image.pullPolicy }}"
+          command: ["/opt/wallarm/ruby/usr/share/wallarm-common/synccloud"]
           env:
           - name: WALLARM_API_HOST
             value: {{ .Values.controller.wallarm.apiHost | default "api.wallarm.com" }}
@@ -87,8 +89,10 @@ spec:
           resources:
 {{ toYaml .Values.controller.wallarm.heartbeat.resources | indent 12 }}
         - name: sync-markers
-          image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag }}"
-          command: ["sh", "-c", "while true; do timeout -k 1m 1h /usr/share/wallarm-common/sync-markers -l STDOUT || true; sleep 60; done"]
+          image: "dmikhin/ingress-ruby:latest"
+          imagePullPolicy: "Always"
+          #imagePullPolicy: "{{ .Values.controller.image.pullPolicy }}"
+          command: ["sh", "-c", "while true; do timeout 1h /opt/wallarm/ruby/usr/share/wallarm-common/sync-markers -l STDOUT || true; sleep 60; done"]
           {{- if .Values.podSecurityPolicy.enabled }}
           securityContext:
             runAsUser: {{ .Values.controller.image.runAsUser | default 65534 }}
@@ -99,8 +103,10 @@ spec:
           resources:
 {{ toYaml (index .Values "controller" "wallarm" "sync-markers" "resources") | indent 12 }}
         - name: export-attacks
-          image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag }}"
-          command: ["sh", "-c", "while true; do timeout -k 1m 3h /usr/share/wallarm-common/export-attacks -l STDOUT || true; done"]
+          image: "dmikhin/ingress-ruby:latest"
+          imagePullPolicy: "Always"
+          #imagePullPolicy: "{{ .Values.controller.image.pullPolicy }}"
+          command: ["sh", "-c", "while true; do timeout 3h /opt/wallarm/ruby/usr/share/wallarm-common/export-attacks -l STDOUT || true; done"]
           {{- if .Values.podSecurityPolicy.enabled }}
           securityContext:
             runAsUser: {{ .Values.controller.image.runAsUser | default 65534 }}
@@ -111,8 +117,10 @@ spec:
           resources:
 {{ toYaml (index .Values "controller" "wallarm" "export-attacks" "resources") | indent 12 }}
         - name: export-counters
-          image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag }}"
-          command: ["sh", "-c", "while true; do timeout -k 15s 11m /usr/share/wallarm-common/export-counters -l STDOUT || true; sleep 60; done"]
+          image: "dmikhin/ingress-ruby:latest"
+          imagePullPolicy: "Always"
+          #imagePullPolicy: "{{ .Values.controller.image.pullPolicy }}"
+          command: ["sh", "-c", "while true; do timeout 11m /opt/wallarm/ruby/usr/share/wallarm-common/export-counters -l STDOUT || true; sleep 60; done"]
           {{- if .Values.podSecurityPolicy.enabled }}
           securityContext:
             runAsUser: {{ .Values.controller.image.runAsUser | default 65534 }}
@@ -123,8 +131,10 @@ spec:
           resources:
 {{ toYaml (index .Values "controller" "wallarm" "export-counters" "resources") | indent 12 }}
         - name: brute-detect
-          image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag }}"
-          command: ["sh", "-c", "while true; do timeout -k 15s 6m /usr/share/wallarm-common/brute-detect -l STDOUT || true; sleep 60; done"]
+          image: "dmikhin/ingress-ruby:latest"
+          imagePullPolicy: "Always"
+          #imagePullPolicy: "{{ .Values.controller.image.pullPolicy }}"
+          command: ["sh", "-c", "while true; do timeout 6m /opt/wallarm/ruby/usr/share/wallarm-common/brute-detect -l STDOUT || true; sleep 60; done"]
           {{- if .Values.podSecurityPolicy.enabled }}
           securityContext:
             runAsUser: {{ .Values.controller.image.runAsUser | default 65534 }}
@@ -134,18 +144,6 @@ spec:
             name: wallarm
           resources:
 {{ toYaml (index .Values "controller" "wallarm" "brute-detect" "resources") | indent 12 }}
-        - name: wallarm-appstructure
-          image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag }}"
-          command: ["/usr/bin/wallarm-appstructure-client", "--config-file", "/etc/wallarm/node.yaml"]
-          volumeMounts:
-          - mountPath: /etc/wallarm
-            name: wallarm
-          {{- if .Values.podSecurityPolicy.enabled }}
-          securityContext:
-            runAsUser: {{ .Values.controller.image.runAsUser | default 65534 }}
-          {{- end }}
-          resources:
-{{ toYaml (index .Values "controller" "wallarm" "wallarm-appstructure" "resources") | indent 12 }}
     {{- if .Values.controller.wallarm.tarantool.nodeSelector }}
       nodeSelector:
 {{ toYaml .Values.controller.wallarm.tarantool.nodeSelector | indent 8 }}

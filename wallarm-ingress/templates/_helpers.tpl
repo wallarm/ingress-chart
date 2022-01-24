@@ -77,15 +77,16 @@ Create the name of the service account to use
 
 {{- define "nginx-ingress.wallarmInitContainer" -}}
 - name: addnode
-  image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag }}"
-  imagePullPolicy: "{{ .Values.controller.image.pullPolicy }}"
+  image: "dmikhin/ingress-ruby:latest"
+  imagePullPolicy: "Always"
+#  imagePullPolicy: "{{ .Values.controller.image.pullPolicy }}"
   command:
   - sh
   - -c
 {{- if eq .Values.controller.wallarm.fallback "on"}}
-{{ print  "- /usr/share/wallarm-common/synccloud --one-time && /usr/share/wallarm-common/sync-ip-lists --one-time -l STDOUT && /usr/share/wallarm-common/sync-ip-lists-source --one-time -l STDOUT && chmod 0644 /etc/wallarm/* || true" | indent 2}}
+{{ print  "- /opt/wallarm/ruby/usr/share/wallarm-common/synccloud --one-time && /opt/wallarm/ruby/usr/share/wallarm-common/sync-ip-lists --one-time -l STDOUT && /opt/wallarm/ruby/usr/share/wallarm-common/sync-ip-lists-source --one-time -l STDOUT && chmod 0644 /etc/wallarm/* || true" | indent 2}}
 {{- else }}
-{{ print  "- /usr/share/wallarm-common/synccloud --one-time && /usr/share/wallarm-common/sync-ip-lists --one-time -l STDOUT && /usr/share/wallarm-common/sync-ip-lists-source --one-time -l STDOUT && chmod 0644 /etc/wallarm/*" | indent 2}}
+{{ print  "- /opt/wallarm/ruby/usr/share/wallarm-common/synccloud --one-time && /opt/wallarm/ruby/usr/share/wallarm-common/sync-ip-lists --one-time -l STDOUT && /opt/wallarm/ruby/usr/share/wallarm-common/sync-ip-lists-source --one-time -l STDOUT && chmod 0644 /etc/wallarm/*" | indent 2}}
 {{- end}}
   env:
   - name: WALLARM_API_HOST
@@ -124,9 +125,10 @@ Create the name of the service account to use
 
 {{- define "nginx-ingress.wallarmExportEnvContainer" -}}
 - name: exportenv
-  image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag }}"
-  imagePullPolicy: "{{ .Values.controller.image.pullPolicy }}"
-  command: ["sh", "-c", "while true; do timeout -k 15s 10m /usr/share/wallarm-common/export-environment -l STDOUT || true; sleep 3600; done"]
+  image: "dmikhin/ingress-ruby:latest"
+  imagePullPolicy: "Always"
+#  imagePullPolicy: "{{ .Values.controller.image.pullPolicy }}"
+  command: ["sh", "-c", "while true; do timeout 10m /opt/wallarm/ruby/usr/share/wallarm-common/export-environment -l STDOUT || true; sleep 3600; done"]
   volumeMounts:
   - mountPath: /etc/wallarm
     name: wallarm
@@ -142,12 +144,13 @@ Create the name of the service account to use
 
 {{- define "nginx-ingress.wallarmSyncnodeContainer" -}}
 - name: synccloud
-  image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag }}"
-  imagePullPolicy: "{{ .Values.controller.image.pullPolicy }}"
+  image: "dmikhin/ingress-ruby:latest"
+  imagePullPolicy: "Always"
+#  imagePullPolicy: "{{ .Values.controller.image.pullPolicy }}"
   command:
   - sh
   - -c
-  - /usr/share/wallarm-common/synccloud
+  - /opt/wallarm/ruby/usr/share/wallarm-common/synccloud
   env:
   - name: WALLARM_API_HOST
     value: {{ .Values.controller.wallarm.apiHost | default "api.wallarm.com" }}
@@ -185,8 +188,10 @@ Create the name of the service account to use
 
 {{- define "nginx-ingress.wallarmSyncAclContainer" -}}
 - name: sync-ip-lists
-  image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag }}"
-  command: ["sh", "-c", "while true; do timeout -k 15s 3h /usr/share/wallarm-common/sync-ip-lists -l STDOUT || true; sleep 60; done"]
+  image: "dmikhin/ingress-ruby:latest"
+  imagePullPolicy: "Always"
+#  imagePullPolicy: "{{ .Values.controller.image.pullPolicy }}"
+  command: ["sh", "-c", "while true; do timeout 3h /opt/wallarm/ruby/usr/share/wallarm-common/sync-ip-lists -l STDOUT || true; sleep 60; done"]
   volumeMounts:
   - mountPath: /etc/wallarm
     name: wallarm
@@ -201,8 +206,9 @@ Create the name of the service account to use
     runAsUser: 0
     {{- end }}
 - name: sync-ip-lists-source
-  image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag }}"
-  command: ["sh", "-c", "while true; do timeout -k 15s 3h /usr/share/wallarm-common/sync-ip-lists-source -l STDOUT || true; sleep 300; done"]
+  image: "dmikhin/ingress-ruby:latest"
+  imagePullPolicy: "Always"
+  command: ["sh", "-c", "while true; do timeout 3h /opt/wallarm/ruby/usr/share/wallarm-common/sync-ip-lists-source -l STDOUT || true; sleep 300; done"]
   volumeMounts:
   - mountPath: /etc/wallarm
     name: wallarm
