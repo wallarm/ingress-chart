@@ -1,3 +1,14 @@
+# DEPRECATED REPOSITORY
+
+Please use original documentation:
+- https://docs.wallarm.com/admin-en/installation-guides/kubernetes/wallarm-sidecar-container-helm/
+
+You also can find source code of the chart by the following link:
+- https://github.com/wallarm/ingress/tree/main/charts/ingress-nginx
+
+The official Helm repository available here:
+- https://charts.wallarm.com
+
 # Helm chart for Wallarm WAF Ingress controller
 
 This chart bootstraps [wallarm-ingress](https://github.com/wallarm/ingress) deployment on a [Kubernetes](http://kubernetes.io) cluster using the [Helm](https://helm.sh) package manager.
